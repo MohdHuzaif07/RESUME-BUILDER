@@ -95,6 +95,22 @@ body {
   border-bottom: 1px solid var(--color-border);
 }
 
+.preview-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
+  padding-bottom: var(--spacing-md);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.preview-panel-header h2 {
+  margin: 0;
+  padding: 0;
+  border-bottom: none;
+}
+
 .preview-panel {
   position: sticky;
   top: var(--spacing-lg);
@@ -357,6 +373,17 @@ textarea.invalid:focus {
   font-size: 0.8125rem;
 }
 
+.btn-primary {
+  color: #fff;
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.btn-primary:hover {
+  background-color: var(--color-primary-hover);
+  border-color: var(--color-primary-hover);
+}
+
 .btn-secondary {
   color: var(--color-text);
   background-color: var(--color-surface);
@@ -493,3 +520,56 @@ textarea.invalid:focus {
     width: 100%;
   }
 }
+
+/* Print styles for PDF export */
+
+@media print {
+  body {
+    background: #fff !important;
+    color: #000 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .app-header,
+  .editor-panel,
+  .preview-panel-header,
+  .btn,
+  .field-hint,
+  .error-message {
+    display: none !important;
+  }
+
+  .app-main {
+    display: block !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .preview-panel {
+    position: static !important;
+    max-height: none !important;
+    overflow: visible !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    background: transparent !important;
+  }
+
+  #resume-preview {
+    padding: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+
+  #resume-preview:empty::before {
+    display: none !important;
+  }
+
+  @page {
+    size: A4 portrait;
+    margin: 12mm 15mm;
+  }
+}
+

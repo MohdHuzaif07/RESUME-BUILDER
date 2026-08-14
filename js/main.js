@@ -458,11 +458,34 @@ function initFormListeners() {
   form.addEventListener("click", handleFormClick);
 }
 
+function handleDownloadPdf() {
+  const originalTitle = document.title;
+  const fullName = resumeState.personalInfo?.fullName?.trim();
+  const fileName = fullName
+    ? `${fullName.replace(/[^a-zA-Z0-9_\s-]/g, "").replace(/\s+/g, "_")}_Resume`
+    : "Resume";
+
+  document.title = fileName;
+  window.print();
+
+  setTimeout(() => {
+    document.title = originalTitle;
+  }, 1000);
+}
+
+function initDownloadPdf() {
+  const downloadBtn = document.getElementById("download-pdf");
+  if (downloadBtn) {
+    downloadBtn.addEventListener("click", handleDownloadPdf);
+  }
+}
+
 function initApp() {
   initFormListeners();
   initDynamicSections();
   initValidation();
   initProfileImage();
+  initDownloadPdf();
 
   const hasLoadedData = loadStateFromStorage();
   if (hasLoadedData) {
@@ -474,4 +497,5 @@ function initApp() {
 }
 
 document.addEventListener("DOMContentLoaded", initApp);
+
 
