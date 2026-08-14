@@ -10,21 +10,492 @@
 <body>
   <header class="app-header">
     <h1>Resume Builder</h1>
+    <p class="app-tagline">Enter your details and preview your resume in real time.</p>
   </header>
 
   <main class="app-main">
     <section class="editor-panel" aria-label="Resume editor">
       <h2>Edit Resume</h2>
-      <!-- Form sections will be added here -->
+
+      <form id="resume-form" novalidate>
+        <!-- Personal Information -->
+        <fieldset class="form-section" id="personal-info-section">
+          <legend>Personal Information</legend>
+
+          <div class="form-group">
+            <label for="full-name">Full Name <span class="required" aria-hidden="true">*</span></label>
+            <input
+              type="text"
+              id="full-name"
+              name="fullName"
+              required
+              maxlength="100"
+              autocomplete="name"
+              placeholder="Jane Doe"
+            >
+            <span class="error-message" id="full-name-error" role="alert"></span>
+          </div>
+
+          <div class="form-group">
+            <label for="job-title">Job Title</label>
+            <input
+              type="text"
+              id="job-title"
+              name="jobTitle"
+              maxlength="100"
+              placeholder="Software Engineer"
+            >
+          </div>
+
+          <div class="form-group">
+            <label for="profile-image">Profile Image</label>
+            <input
+              type="file"
+              id="profile-image"
+              name="profileImage"
+              accept="image/jpeg,image/png,image/webp"
+            >
+            <p class="field-hint">Accepted formats: JPG, PNG, WebP. Max size: 2 MB.</p>
+            <span class="error-message" id="profile-image-error" role="alert"></span>
+            <div class="image-preview-wrapper" id="profile-image-preview-wrapper" hidden>
+              <img
+                id="profile-image-preview"
+                class="profile-image-preview"
+                src=""
+                alt="Profile preview"
+              >
+              <button type="button" id="remove-profile-image" class="btn btn-secondary btn-sm">
+                Remove Image
+              </button>
+            </div>
+          </div>
+        </fieldset>
+
+        <!-- Contact Information -->
+        <fieldset class="form-section" id="contact-info-section">
+          <legend>Contact Information</legend>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="email">Email <span class="required" aria-hidden="true">*</span></label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                required
+                maxlength="254"
+                autocomplete="email"
+                placeholder="jane.doe@email.com"
+              >
+              <span class="error-message" id="email-error" role="alert"></span>
+            </div>
+
+            <div class="form-group">
+              <label for="phone">Phone</label>
+              <input
+                type="tel"
+                id="phone"
+                name="phone"
+                maxlength="20"
+                autocomplete="tel"
+                placeholder="+1 (555) 123-4567"
+              >
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="location">Location</label>
+            <input
+              type="text"
+              id="location"
+              name="location"
+              maxlength="100"
+              placeholder="City, Country"
+            >
+          </div>
+        </fieldset>
+
+        <!-- Social Links -->
+        <fieldset class="form-section" id="social-links-section">
+          <legend>Social &amp; Portfolio Links</legend>
+
+          <div class="form-group">
+            <label for="linkedin">LinkedIn</label>
+            <input
+              type="url"
+              id="linkedin"
+              name="linkedin"
+              maxlength="500"
+              placeholder="https://linkedin.com/in/yourprofile"
+            >
+            <span class="error-message" id="linkedin-error" role="alert"></span>
+          </div>
+
+          <div class="form-group">
+            <label for="github">GitHub</label>
+            <input
+              type="url"
+              id="github"
+              name="github"
+              maxlength="500"
+              placeholder="https://github.com/yourusername"
+            >
+            <span class="error-message" id="github-error" role="alert"></span>
+          </div>
+
+          <div class="form-group">
+            <label for="portfolio">Portfolio</label>
+            <input
+              type="url"
+              id="portfolio"
+              name="portfolio"
+              maxlength="500"
+              placeholder="https://yourportfolio.com"
+            >
+            <span class="error-message" id="portfolio-error" role="alert"></span>
+          </div>
+        </fieldset>
+
+        <!-- Professional Summary -->
+        <fieldset class="form-section" id="summary-section">
+          <legend>Professional Summary</legend>
+
+          <div class="form-group">
+            <label for="summary">Summary</label>
+            <textarea
+              id="summary"
+              name="summary"
+              rows="5"
+              maxlength="1000"
+              placeholder="Brief overview of your professional background, strengths, and career goals."
+            ></textarea>
+            <p class="field-hint"><span id="summary-char-count">0</span> / 1000 characters</p>
+          </div>
+        </fieldset>
+
+        <!-- Education -->
+        <fieldset class="form-section" id="education-section">
+          <legend>Education</legend>
+
+          <div id="education-list" class="dynamic-list" aria-live="polite"></div>
+
+          <button type="button" id="add-education" class="btn btn-secondary">
+            + Add Education
+          </button>
+        </fieldset>
+
+        <!-- Work Experience -->
+        <fieldset class="form-section" id="experience-section">
+          <legend>Work Experience</legend>
+
+          <div id="experience-list" class="dynamic-list" aria-live="polite"></div>
+
+          <button type="button" id="add-experience" class="btn btn-secondary">
+            + Add Experience
+          </button>
+        </fieldset>
+
+        <!-- Projects -->
+        <fieldset class="form-section" id="projects-section">
+          <legend>Projects</legend>
+
+          <div id="projects-list" class="dynamic-list" aria-live="polite"></div>
+
+          <button type="button" id="add-project" class="btn btn-secondary">
+            + Add Project
+          </button>
+        </fieldset>
+
+        <!-- Skills -->
+        <fieldset class="form-section" id="skills-section">
+          <legend>Technical Skills</legend>
+
+          <div class="form-group">
+            <label for="skills">Skills</label>
+            <input
+              type="text"
+              id="skills"
+              name="skills"
+              maxlength="500"
+              placeholder="JavaScript, HTML, CSS, React, Node.js"
+            >
+            <p class="field-hint">Separate skills with commas.</p>
+          </div>
+        </fieldset>
+
+        <!-- Certifications -->
+        <fieldset class="form-section" id="certifications-section">
+          <legend>Certifications</legend>
+
+          <div id="certifications-list" class="dynamic-list" aria-live="polite"></div>
+
+          <button type="button" id="add-certification" class="btn btn-secondary">
+            + Add Certification
+          </button>
+        </fieldset>
+
+        <!-- Achievements -->
+        <fieldset class="form-section" id="achievements-section">
+          <legend>Achievements</legend>
+
+          <div id="achievements-list" class="dynamic-list" aria-live="polite"></div>
+
+          <button type="button" id="add-achievement" class="btn btn-secondary">
+            + Add Achievement
+          </button>
+        </fieldset>
+
+        <!-- Languages -->
+        <fieldset class="form-section" id="languages-section">
+          <legend>Languages</legend>
+
+          <div id="languages-list" class="dynamic-list" aria-live="polite"></div>
+
+          <button type="button" id="add-language" class="btn btn-secondary">
+            + Add Language
+          </button>
+        </fieldset>
+
+        <!-- Template Selection -->
+        <fieldset class="form-section" id="template-section">
+          <legend>Resume Template</legend>
+
+          <div class="form-group">
+            <label for="template">Template</label>
+            <select id="template" name="template">
+              <option value="default" selected>Default</option>
+              <option value="modern" disabled>Modern (coming soon)</option>
+              <option value="classic" disabled>Classic (coming soon)</option>
+            </select>
+          </div>
+        </fieldset>
+      </form>
     </section>
 
     <section class="preview-panel" aria-label="Resume preview">
       <h2>Preview</h2>
-      <article id="resume-preview" class="resume">
+      <article id="resume-preview" class="resume" aria-live="polite">
         <!-- Live preview will render here -->
       </article>
     </section>
   </main>
+
+  <!-- Education entry template -->
+  <template id="education-template">
+    <article class="dynamic-entry" data-section="education">
+      <header class="dynamic-entry-header">
+        <h3 class="dynamic-entry-title">Education</h3>
+        <button type="button" class="btn btn-danger btn-sm btn-remove" aria-label="Remove education entry">
+          Remove
+        </button>
+      </header>
+
+      <div class="form-group">
+        <label>Institution</label>
+        <input type="text" name="institution" maxlength="150" placeholder="University name" data-field="institution">
+      </div>
+
+      <div class="form-group">
+        <label>Degree</label>
+        <input type="text" name="degree" maxlength="150" placeholder="Bachelor of Science in Computer Science" data-field="degree">
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Start Date</label>
+          <input type="month" name="startDate" data-field="startDate">
+        </div>
+        <div class="form-group">
+          <label>End Date</label>
+          <input type="month" name="endDate" data-field="endDate">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>
+          <input type="checkbox" name="currentlyStudying" data-field="currentlyStudying">
+          Currently studying here
+        </label>
+      </div>
+
+      <div class="form-group">
+        <label>Description</label>
+        <textarea name="description" rows="3" maxlength="500" placeholder="Relevant coursework, honors, GPA, etc." data-field="description"></textarea>
+      </div>
+    </article>
+  </template>
+
+  <!-- Experience entry template -->
+  <template id="experience-template">
+    <article class="dynamic-entry" data-section="experience">
+      <header class="dynamic-entry-header">
+        <h3 class="dynamic-entry-title">Experience</h3>
+        <button type="button" class="btn btn-danger btn-sm btn-remove" aria-label="Remove experience entry">
+          Remove
+        </button>
+      </header>
+
+      <div class="form-group">
+        <label>Company</label>
+        <input type="text" name="company" maxlength="150" placeholder="Company name" data-field="company">
+      </div>
+
+      <div class="form-group">
+        <label>Job Title</label>
+        <input type="text" name="jobTitle" maxlength="100" placeholder="Your role" data-field="jobTitle">
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Start Date</label>
+          <input type="month" name="startDate" data-field="startDate">
+        </div>
+        <div class="form-group">
+          <label>End Date</label>
+          <input type="month" name="endDate" data-field="endDate">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>
+          <input type="checkbox" name="currentlyWorking" data-field="currentlyWorking">
+          I currently work here
+        </label>
+      </div>
+
+      <div class="form-group">
+        <label>Description</label>
+        <textarea name="description" rows="4" maxlength="1000" placeholder="Describe your responsibilities and accomplishments." data-field="description"></textarea>
+      </div>
+    </article>
+  </template>
+
+  <!-- Project entry template -->
+  <template id="project-template">
+    <article class="dynamic-entry" data-section="project">
+      <header class="dynamic-entry-header">
+        <h3 class="dynamic-entry-title">Project</h3>
+        <button type="button" class="btn btn-danger btn-sm btn-remove" aria-label="Remove project entry">
+          Remove
+        </button>
+      </header>
+
+      <div class="form-group">
+        <label>Project Name</label>
+        <input type="text" name="name" maxlength="150" placeholder="Project title" data-field="name">
+      </div>
+
+      <div class="form-group">
+        <label>Project URL</label>
+        <input type="url" name="url" maxlength="500" placeholder="https://github.com/you/project" data-field="url">
+      </div>
+
+      <div class="form-group">
+        <label>Technologies</label>
+        <input type="text" name="technologies" maxlength="200" placeholder="React, Node.js, MongoDB" data-field="technologies">
+      </div>
+
+      <div class="form-group">
+        <label>Description</label>
+        <textarea name="description" rows="4" maxlength="1000" placeholder="What the project does and your contribution." data-field="description"></textarea>
+      </div>
+    </article>
+  </template>
+
+  <!-- Certification entry template -->
+  <template id="certification-template">
+    <article class="dynamic-entry" data-section="certification">
+      <header class="dynamic-entry-header">
+        <h3 class="dynamic-entry-title">Certification</h3>
+        <button type="button" class="btn btn-danger btn-sm btn-remove" aria-label="Remove certification entry">
+          Remove
+        </button>
+      </header>
+
+      <div class="form-group">
+        <label>Certification Name</label>
+        <input type="text" name="name" maxlength="150" placeholder="AWS Certified Developer" data-field="name">
+      </div>
+
+      <div class="form-group">
+        <label>Issuing Organization</label>
+        <input type="text" name="issuer" maxlength="150" placeholder="Amazon Web Services" data-field="issuer">
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Issue Date</label>
+          <input type="month" name="issueDate" data-field="issueDate">
+        </div>
+        <div class="form-group">
+          <label>Expiry Date</label>
+          <input type="month" name="expiryDate" data-field="expiryDate">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Credential URL</label>
+        <input type="url" name="url" maxlength="500" placeholder="https://credly.com/badges/..." data-field="url">
+      </div>
+    </article>
+  </template>
+
+  <!-- Achievement entry template -->
+  <template id="achievement-template">
+    <article class="dynamic-entry" data-section="achievement">
+      <header class="dynamic-entry-header">
+        <h3 class="dynamic-entry-title">Achievement</h3>
+        <button type="button" class="btn btn-danger btn-sm btn-remove" aria-label="Remove achievement entry">
+          Remove
+        </button>
+      </header>
+
+      <div class="form-group">
+        <label>Title</label>
+        <input type="text" name="title" maxlength="150" placeholder="Dean's List, Hackathon Winner, etc." data-field="title">
+      </div>
+
+      <div class="form-group">
+        <label>Date</label>
+        <input type="month" name="date" data-field="date">
+      </div>
+
+      <div class="form-group">
+        <label>Description</label>
+        <textarea name="description" rows="3" maxlength="500" placeholder="Brief details about the achievement." data-field="description"></textarea>
+      </div>
+    </article>
+  </template>
+
+  <!-- Language entry template -->
+  <template id="language-template">
+    <article class="dynamic-entry" data-section="language">
+      <header class="dynamic-entry-header">
+        <h3 class="dynamic-entry-title">Language</h3>
+        <button type="button" class="btn btn-danger btn-sm btn-remove" aria-label="Remove language entry">
+          Remove
+        </button>
+      </header>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Language</label>
+          <input type="text" name="language" maxlength="50" placeholder="English" data-field="language">
+        </div>
+        <div class="form-group">
+          <label>Proficiency</label>
+          <select name="proficiency" data-field="proficiency">
+            <option value="">Select level</option>
+            <option value="native">Native</option>
+            <option value="fluent">Fluent</option>
+            <option value="advanced">Advanced</option>
+            <option value="intermediate">Intermediate</option>
+            <option value="basic">Basic</option>
+          </select>
+        </div>
+      </div>
+    </article>
+  </template>
 
   <script src="js/state.js"></script>
   <script src="js/validation.js"></script>
