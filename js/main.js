@@ -124,9 +124,111 @@ function syncStateFromForm() {
   syncTemplateFromForm();
 }
 
+const STORAGE_KEY = "resume_builder_data";
+
+function saveStateToStorage() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(resumeState));
+  } catch (err) {
+    console.warn("Unable to save resume state to localStorage:", err);
+  }
+}
+
+function loadStateFromStorage() {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (!saved) return false;
+
+    const parsed = JSON.parse(saved);
+    if (parsed && typeof parsed === "object") {
+      if (parsed.personalInfo && typeof parsed.personalInfo === "object") {
+        resumeState.personalInfo = {
+          ...resumeState.personalInfo,
+          ...parsed.personalInfo,
+        };
+      }
+      if (Array.isArray(parsed.education)) resumeState.education = parsed.education;
+      if (Array.isArray(parsed.experience)) resumeState.experience = parsed.experience;
+      if (Array.isArray(parsed.projects)) resumeState.projects = parsed.projects;
+      if (Array.isArray(parsed.skills)) resumeState.skills = parsed.skills;
+      if (Array.isArray(parsed.certifications)) resumeState.certifications = parsed.certifications;
+      if (Array.isArray(parsed.achievements)) resumeState.achievements = parsed.achievements;
+      if (Array.isArray(parsed.languages)) resumeState.languages = parsed.languages;
+      if (typeof parsed.template === "string") resumeState.template = parsed.template;
+      return true;
+    }
+  } catch (err) {
+    console.warn("Unable to load resume state from localStorage:", err);
+  }
+  return false;
+}
+
+function populateDynamicEntry(entryEl, entryData) {
+  if (!entryEl || !entryData) return;
+
+  entryEl.querySelectorAll("[data-field]").forEach((field) => {
+    const key = field.dataset.field;
+    if (key in entryData) {
+      if (field.type === "checkbox") {
+        field.checked = Boolean(entryData[key]);
+      } else {
+        field.value = entryData[key] ?? "";
+      }
+    }
+  });
+
+  applyCurrentCheckboxBehavior(entryEl);
+}
+
+function populateFormFromState() {
+  const info = resumeState.personalInfo || {};
+
+  PERSONAL_FIELDS.forEach(({ id, key }) => {
+    const field = document.getElementById(id);
+    if (field && info[key] !== undefined) {
+      field.value = info[key];
+    }
+  });
+
+  if (info.profileImage) {
+    showProfileImagePreview(info.profileImage);
+  }
+
+  const skillsInput = document.getElementById("skills");
+  if (skillsInput && Array.isArray(resumeState.skills)) {
+    skillsInput.value = resumeState.skills.join(", ");
+  }
+
+  const templateSelect = document.getElementById("template");
+  if (templateSelect && resumeState.template) {
+    templateSelect.value = resumeState.template;
+  }
+
+  DYNAMIC_SECTIONS.forEach(({ stateKey, listId, templateId }) => {
+    const list = document.getElementById(listId);
+    const template = document.getElementById(templateId);
+    if (!list || !template) return;
+
+    list.innerHTML = "";
+
+    const entries = resumeState[stateKey];
+    if (Array.isArray(entries)) {
+      entries.forEach((entryData) => {
+        const entryEl = template.content.cloneNode(true).querySelector(".dynamic-entry");
+        if (!entryEl) return;
+        populateDynamicEntry(entryEl, entryData);
+        list.appendChild(entryEl);
+      });
+    }
+  });
+
+  updateSummaryCharCount();
+}
+
 function updateStateAndPreview() {
   syncStateFromForm();
   renderPreview();
+  saveStateToStorage();
 }
 
 function setFieldError(inputId, errorId, message) {
@@ -236,7 +338,7 @@ function clearProfileImage() {
 
   resumeState.personalInfo.profileImage = "";
   setFieldError("profile-image", "profile-image-error", "");
-  renderPreview();
+  updateStateAndPreview();
 }
 
 function showProfileImagePreview(dataUrl) {
@@ -280,6 +382,7 @@ function handleProfileImageChange(event) {
   reader.onload = () => {
     if (typeof reader.result === "string") {
       showProfileImagePreview(reader.result);
+      saveStateToStorage();
     }
   };
   reader.onerror = () => {
@@ -360,8 +463,15 @@ function initApp() {
   initDynamicSections();
   initValidation();
   initProfileImage();
+
+  const hasLoadedData = loadStateFromStorage();
+  if (hasLoadedData) {
+    populateFormFromState();
+  }
+
   updateSummaryCharCount();
   updateStateAndPreview();
 }
 
 document.addEventListener("DOMContentLoaded", initApp);
+
