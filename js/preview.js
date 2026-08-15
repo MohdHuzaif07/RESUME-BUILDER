@@ -153,15 +153,18 @@ function renderExperienceHtml(experience = []) {
         Boolean(entry.currentlyWorking)
       );
 
+      const hasJob = hasText(entry.jobTitle);
+      const hasCo = hasText(entry.company);
+
       return `
         <div class="resume-entry">
           <div class="resume-entry-header">
-            ${hasText(entry.jobTitle)
+            ${hasJob
               ? `<h3 class="resume-entry-title">${escapeHtml(entry.jobTitle)}</h3>`
               : `<h3 class="resume-entry-title">${escapeHtml(entry.company || "Experience")}</h3>`}
             ${dateRange ? `<span class="resume-entry-date">${dateRange}</span>` : ""}
           </div>
-          ${hasText(entry.company) && hasText(entry.jobTitle)
+          ${hasCo && hasJob
             ? `<p class="resume-entry-subtitle">${escapeHtml(entry.company)}</p>`
             : ""}
           ${hasText(entry.description)
@@ -195,15 +198,18 @@ function renderEducationHtml(education = []) {
         Boolean(entry.currentlyStudying)
       );
 
+      const hasInst = hasText(entry.institution);
+      const hasDeg = hasText(entry.degree);
+
       return `
         <div class="resume-entry">
           <div class="resume-entry-header">
-            ${hasText(entry.institution)
+            ${hasInst
               ? `<h3 class="resume-entry-title">${escapeHtml(entry.institution)}</h3>`
               : `<h3 class="resume-entry-title">${escapeHtml(entry.degree || "Education")}</h3>`}
             ${dateRange ? `<span class="resume-entry-date">${dateRange}</span>` : ""}
           </div>
-          ${hasText(entry.degree)
+          ${hasDeg && hasInst
             ? `<p class="resume-entry-subtitle">${escapeHtml(entry.degree)}</p>`
             : ""}
           ${hasText(entry.description)

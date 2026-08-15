@@ -21,6 +21,7 @@ const PERSONAL_FIELDS = [
 const DYNAMIC_SECTIONS = [
   {
     stateKey: "education",
+    sectionName: "education",
     listId: "education-list",
     templateId: "education-template",
     addButtonId: "add-education",
@@ -28,6 +29,7 @@ const DYNAMIC_SECTIONS = [
   },
   {
     stateKey: "experience",
+    sectionName: "experience",
     listId: "experience-list",
     templateId: "experience-template",
     addButtonId: "add-experience",
@@ -35,29 +37,50 @@ const DYNAMIC_SECTIONS = [
   },
   {
     stateKey: "projects",
+    sectionName: "project",
     listId: "projects-list",
     templateId: "project-template",
     addButtonId: "add-project",
   },
   {
     stateKey: "certifications",
+    sectionName: "certification",
     listId: "certifications-list",
     templateId: "certification-template",
     addButtonId: "add-certification",
   },
   {
     stateKey: "achievements",
+    sectionName: "achievement",
     listId: "achievements-list",
     templateId: "achievement-template",
     addButtonId: "add-achievement",
   },
   {
     stateKey: "languages",
+    sectionName: "language",
     listId: "languages-list",
     templateId: "language-template",
     addButtonId: "add-language",
   },
 ];
+
+/* ─── Debounce Utility ─── */
+
+function debounce(fn, delay) {
+  let timerId = null;
+  return function (...args) {
+    if (timerId !== null) {
+      clearTimeout(timerId);
+    }
+    timerId = setTimeout(() => {
+      timerId = null;
+      fn.apply(this, args);
+    }, delay);
+  };
+}
+
+/* ─── State ↔ Form Sync ─── */
 
 function syncPersonalInfoFromForm() {
   const info = { ...resumeState.personalInfo };
@@ -124,13 +147,57 @@ function syncStateFromForm() {
   syncTemplateFromForm();
 }
 
+/* ─── LocalStorage Persistence ─── */
+
 const STORAGE_KEY = "resume_builder_data";
+
+function showStorageWarning(message) {
+  let banner = document.getElementById("storage-warning-banner");
+  if (!banner) {
+    banner = document.createElement("div");
+    banner.id = "storage-warning-banner";
+    banner.className = "storage-warning-banner";
+    banner.setAttribute("role", "alert");
+    const header = document.querySelector(".app-header");
+    if (header && header.nextSibling) {
+      header.parentNode.insertBefore(banner, header.nextSibling);
+    } else {
+      document.body.prepend(banner);
+    }
+  }
+  banner.textContent = message;
+  banner.hidden = false;
+
+  // Auto-dismiss after 8 seconds
+  setTimeout(() => {
+    banner.hidden = true;
+  }, 8000);
+}
 
 function saveStateToStorage() {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(resumeState));
   } catch (err) {
-    console.warn("Unable to save resume state to localStorage:", err);
+    // Handle QuotaExceededError — try saving without profileImage
+    if (err.name === "QuotaExceededError" || err.code === 22 || err.code === 1014) {
+      try {
+        const slimState = {
+          ...resumeState,
+          personalInfo: { ...resumeState.personalInfo, profileImage: "" },
+        };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(slimState));
+        showStorageWarning(
+          "Storage is nearly full. Your profile image won't be saved between sessions, but all other data is preserved."
+        );
+      } catch (innerErr) {
+        showStorageWarning(
+          "Unable to save your resume data. Browser storage is full."
+        );
+        console.warn("Unable to save resume state to localStorage:", innerErr);
+      }
+    } else {
+      console.warn("Unable to save resume state to localStorage:", err);
+    }
   }
 }
 
@@ -162,6 +229,8 @@ function loadStateFromStorage() {
   }
   return false;
 }
+
+/* ─── Populate Form From State ─── */
 
 function populateDynamicEntry(entryEl, entryData) {
   if (!entryEl || !entryData) return;
@@ -225,11 +294,18 @@ function populateFormFromState() {
   updateSummaryCharCount();
 }
 
+/* ─── Update Pipeline ─── */
+
 function updateStateAndPreview() {
   syncStateFromForm();
   renderPreview();
   saveStateToStorage();
 }
+
+/** Debounced version for text input events (50ms) */
+const debouncedUpdateStateAndPreview = debounce(updateStateAndPreview, 50);
+
+/* ─── Field Validation ─── */
 
 function setFieldError(inputId, errorId, message) {
   const input = document.getElementById(inputId);
@@ -285,6 +361,27 @@ function validatePortfolio() {
   return validateUrlField("portfolio", "portfolio-error", "portfolio");
 }
 
+function validatePhone() {
+  const value = document.getElementById("phone")?.value.trim() || "";
+  // Phone is optional — only validate if user entered something
+  if (!value) return true;
+  const valid = isValidPhone(value);
+  // No dedicated error span in HTML for phone, so use a lightweight approach
+  const phoneInput = document.getElementById("phone");
+  if (phoneInput) {
+    if (valid) {
+      phoneInput.classList.remove("invalid");
+      phoneInput.title = "";
+    } else {
+      phoneInput.classList.add("invalid");
+      phoneInput.title = "Enter a valid phone number.";
+    }
+  }
+  return valid;
+}
+
+/* ─── Character Counter ─── */
+
 function updateSummaryCharCount() {
   const summary = document.getElementById("summary");
   const counter = document.getElementById("summary-char-count");
@@ -293,6 +390,12 @@ function updateSummaryCharCount() {
   }
 }
 
+/* ─── Dynamic Entry Checkbox Behavior ─── */
+
+/**
+ * B1 Fix: Only toggle the relevant currentField for the entry's section,
+ * rather than looping all DYNAMIC_SECTIONS.
+ */
 function toggleEndDateField(entryEl, checkboxField) {
   if (!entryEl || !checkboxField) return;
 
@@ -307,12 +410,20 @@ function toggleEndDateField(entryEl, checkboxField) {
 }
 
 function applyCurrentCheckboxBehavior(entryEl) {
-  DYNAMIC_SECTIONS.forEach(({ currentField }) => {
-    if (currentField) {
-      toggleEndDateField(entryEl, currentField);
-    }
-  });
+  if (!entryEl) return;
+
+  // B1 Fix: Determine the section from the entry's data-section attribute
+  // and only toggle the relevant checkbox field.
+  const sectionName = entryEl.dataset.section;
+  if (!sectionName) return;
+
+  const section = DYNAMIC_SECTIONS.find((s) => s.sectionName === sectionName);
+  if (section && section.currentField) {
+    toggleEndDateField(entryEl, section.currentField);
+  }
 }
+
+/* ─── Dynamic Section CRUD ─── */
 
 function addDynamicEntry({ listId, templateId }) {
   const list = document.getElementById(listId);
@@ -327,13 +438,16 @@ function addDynamicEntry({ listId, templateId }) {
   updateStateAndPreview();
 }
 
+/* ─── Profile Image ─── */
+
 function clearProfileImage() {
   const fileInput = document.getElementById("profile-image");
   const previewWrapper = document.getElementById("profile-image-preview-wrapper");
   const previewImage = document.getElementById("profile-image-preview");
 
   if (fileInput) fileInput.value = "";
-  if (previewImage) previewImage.src = "";
+  // B5 Fix: Use removeAttribute instead of setting src="" to avoid a spurious network request
+  if (previewImage) previewImage.removeAttribute("src");
   if (previewWrapper) previewWrapper.hidden = true;
 
   resumeState.personalInfo.profileImage = "";
@@ -356,22 +470,10 @@ function handleProfileImageChange(event) {
   const file = event.target.files?.[0];
   if (!file) return;
 
-  if (!ALLOWED_IMAGE_TYPES.has(file.type)) {
-    setFieldError(
-      "profile-image",
-      "profile-image-error",
-      "Please upload a JPG, PNG, or WebP image."
-    );
-    event.target.value = "";
-    return;
-  }
-
-  if (file.size > MAX_IMAGE_SIZE_BYTES) {
-    setFieldError(
-      "profile-image",
-      "profile-image-error",
-      "Image must be 2 MB or smaller."
-    );
+  // A1 Fix: Use validateFile from validation.js instead of inline checks
+  const result = validateFile(file, MAX_IMAGE_SIZE_BYTES, ALLOWED_IMAGE_TYPES);
+  if (!result.valid) {
+    setFieldError("profile-image", "profile-image-error", result.error);
     event.target.value = "";
     return;
   }
@@ -396,6 +498,8 @@ function handleProfileImageChange(event) {
   reader.readAsDataURL(file);
 }
 
+/* ─── Form Event Handlers ─── */
+
 function handleFormInput(event) {
   const target = event.target;
 
@@ -408,7 +512,25 @@ function handleFormInput(event) {
     applyCurrentCheckboxBehavior(entryEl);
   }
 
-  updateStateAndPreview();
+  // P2 Fix: Use debounced update for text-like inputs to avoid
+  // redundant double-firing from input+change on the same keystroke.
+  // For checkboxes, selects, and file inputs, update immediately since
+  // they only fire 'change' (not 'input').
+  const isTextLike =
+    target.tagName === "TEXTAREA" ||
+    (target.tagName === "INPUT" &&
+      !["checkbox", "radio", "file"].includes(target.type));
+
+  if (event.type === "change" && isTextLike) {
+    // Skip: the 'input' event already triggered the debounced update.
+    return;
+  }
+
+  if (isTextLike) {
+    debouncedUpdateStateAndPreview();
+  } else {
+    updateStateAndPreview();
+  }
 }
 
 function handleFormClick(event) {
@@ -421,6 +543,84 @@ function handleFormClick(event) {
     updateStateAndPreview();
   }
 }
+
+/* ─── PDF Download ─── */
+
+function handleDownloadPdf() {
+  const previewEl = document.getElementById("resume-preview");
+  const downloadBtn = document.getElementById("download-pdf");
+  if (!previewEl) return;
+
+  // Derive a clean filename from the user's full name
+  const fullName = resumeState.personalInfo?.fullName?.trim();
+  const fileName = fullName
+    ? `${fullName.replace(/[^a-zA-Z0-9_\s-]/g, "").replace(/\s+/g, "_")}_Resume.pdf`
+    : "Resume.pdf";
+
+  // Show loading state on button (preserve the SVG icon)
+  let originalBtnHtml = "";
+  if (downloadBtn) {
+    originalBtnHtml = downloadBtn.innerHTML;
+    downloadBtn.disabled = true;
+    downloadBtn.classList.add("btn-loading");
+    downloadBtn.innerHTML = "Generating…";
+  }
+
+  // Clone the preview element so we don't disrupt the live preview
+  const clone = previewEl.cloneNode(true);
+  clone.style.width = "210mm"; // A4 width for consistent rendering
+  clone.style.padding = "2rem";
+  clone.style.background = "#fff";
+  clone.style.position = "absolute";
+  clone.style.left = "-9999px";
+  clone.style.top = "0";
+  document.body.appendChild(clone);
+
+  const options = {
+    margin: [10, 15, 10, 15], // mm: top, left, bottom, right
+    filename: fileName,
+    image: { type: "jpeg", quality: 0.98 },
+    html2canvas: {
+      scale: 2,
+      useCORS: true,
+      letterRendering: true,
+      logging: false,
+    },
+    jsPDF: {
+      unit: "mm",
+      format: "a4",
+      orientation: "portrait",
+    },
+    enableLinks: true,
+    pagebreak: { mode: ["avoid-all", "css", "legacy"] },
+  };
+
+  html2pdf()
+    .set(options)
+    .from(clone)
+    .save()
+    .then(() => {
+      // Clean up
+      document.body.removeChild(clone);
+      if (downloadBtn) {
+        downloadBtn.disabled = false;
+        downloadBtn.classList.remove("btn-loading");
+        downloadBtn.innerHTML = originalBtnHtml;
+      }
+    })
+    .catch((err) => {
+      console.error("PDF generation failed:", err);
+      document.body.removeChild(clone);
+      if (downloadBtn) {
+        downloadBtn.disabled = false;
+        downloadBtn.classList.remove("btn-loading");
+        downloadBtn.innerHTML = originalBtnHtml;
+      }
+      showStorageWarning("PDF generation failed. Please try again.");
+    });
+}
+
+/* ─── Initialization ─── */
 
 function initDynamicSections() {
   DYNAMIC_SECTIONS.forEach((section) => {
@@ -437,6 +637,8 @@ function initValidation() {
   document.getElementById("linkedin")?.addEventListener("blur", validateLinkedIn);
   document.getElementById("github")?.addEventListener("blur", validateGitHub);
   document.getElementById("portfolio")?.addEventListener("blur", validatePortfolio);
+  // V1: Wire up phone validation (was defined in validation.js but never used)
+  document.getElementById("phone")?.addEventListener("blur", validatePhone);
 }
 
 function initProfileImage() {
@@ -453,24 +655,11 @@ function initFormListeners() {
   const form = document.getElementById("resume-form");
   if (!form) return;
 
+  // P2 Fix: Both listeners are kept, but handleFormInput now intelligently
+  // skips the 'change' event for text-like inputs to avoid double-firing.
   form.addEventListener("input", handleFormInput);
   form.addEventListener("change", handleFormInput);
   form.addEventListener("click", handleFormClick);
-}
-
-function handleDownloadPdf() {
-  const originalTitle = document.title;
-  const fullName = resumeState.personalInfo?.fullName?.trim();
-  const fileName = fullName
-    ? `${fullName.replace(/[^a-zA-Z0-9_\s-]/g, "").replace(/\s+/g, "_")}_Resume`
-    : "Resume";
-
-  document.title = fileName;
-  window.print();
-
-  setTimeout(() => {
-    document.title = originalTitle;
-  }, 1000);
 }
 
 function initDownloadPdf() {
@@ -497,5 +686,3 @@ function initApp() {
 }
 
 document.addEventListener("DOMContentLoaded", initApp);
-
-
