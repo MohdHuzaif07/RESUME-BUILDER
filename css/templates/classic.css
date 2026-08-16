@@ -1,0 +1,205 @@
+/* Classic Resume Template Styles */
+
+.resume--classic {
+  font-family: Georgia, "Times New Roman", Times, serif;
+  font-size: 0.875rem;
+  line-height: 1.55;
+  color: #111111;
+  background-color: #ffffff;
+  padding: 2.5rem;
+  box-sizing: border-box;
+}
+
+.resume--classic .resume-header {
+  text-align: center;
+  padding-bottom: 1rem;
+  margin-bottom: 1.25rem;
+  border-bottom: 2px double #333333;
+}
+
+.resume--classic .resume-photo {
+  display: block;
+  margin: 0 auto 0.75rem;
+  width: 85px;
+  height: 85px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 1px solid #666666;
+}
+
+.resume--classic .resume-name {
+  margin: 0 0 0.25rem;
+  font-size: 1.85rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: #000000;
+  text-transform: uppercase;
+}
+
+.resume--classic .resume-title {
+  margin: 0 0 0.625rem;
+  font-size: 1.05rem;
+  font-style: italic;
+  color: #444444;
+}
+
+.resume--classic .resume-contact,
+.resume--classic .resume-links {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.25rem 0.875rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.8125rem;
+  color: #333333;
+}
+
+.resume--classic .resume-links {
+  margin-top: 0.25rem;
+}
+
+.resume--classic .resume-links a {
+  color: #111111;
+  text-decoration: none;
+  border-bottom: 1px solid #777777;
+}
+
+.resume--classic .resume-links a:hover {
+  border-bottom-color: #000000;
+}
+
+.resume--classic .resume-section {
+  margin-bottom: 1.25rem;
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+
+.resume--classic .resume-section:last-child {
+  margin-bottom: 0;
+}
+
+.resume--classic .resume-section-title {
+  margin: 0 0 0.5rem;
+  padding-bottom: 0.15rem;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #000000;
+  border-bottom: 1px solid #222222;
+}
+
+.resume--classic .resume-summary {
+  margin: 0;
+  text-align: justify;
+  color: #222222;
+}
+
+.resume--classic .resume-entry {
+  margin-bottom: 0.875rem;
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+
+.resume--classic .resume-entry:last-child {
+  margin-bottom: 0;
+}
+
+.resume--classic .resume-entry-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+}
+
+.resume--classic .resume-entry-title {
+  margin: 0;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: #000000;
+}
+
+.resume--classic .resume-entry-title a {
+  color: #111111;
+  text-decoration: underline;
+}
+
+.resume--classic .resume-entry-date {
+  font-size: 0.8125rem;
+  font-style: italic;
+  color: #444444;
+}
+
+.resume--classic .resume-entry-subtitle {
+  margin: 0.125rem 0 0.25rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  font-style: italic;
+  color: #333333;
+}
+
+.resume--classic .resume-entry-meta {
+  margin: 0 0 0.25rem;
+  font-size: 0.8125rem;
+  color: #555555;
+}
+
+.resume--classic .resume-entry-description {
+  margin: 0.25rem 0 0;
+  font-size: 0.8125rem;
+  color: #222222;
+}
+
+.resume--classic .resume-entry-description ul,
+.resume--classic .resume-summary ul {
+  margin: 0.25rem 0 0;
+  padding-left: 1.25rem;
+}
+
+.resume--classic .resume-skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.resume--classic .resume-skill {
+  display: inline-block;
+  padding: 0.15rem 0.45rem;
+  font-size: 0.75rem;
+  color: #111111;
+  background-color: #f5f5f5;
+  border: 1px solid #cccccc;
+  border-radius: 2px;
+}
+
+.resume--classic .resume-list {
+  margin: 0;
+  padding-left: 1.25rem;
+}
+
+.resume--classic .resume-list li {
+  margin-bottom: 0.375rem;
+  font-size: 0.8125rem;
+}
+
+.resume--classic .resume-language {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 0.375rem;
+  font-size: 0.8125rem;
+}
+
+.resume--classic .resume-language-name {
+  font-weight: 600;
+}
+
+.resume--classic .resume-language-level {
+  font-style: italic;
+  color: #555555;
+}

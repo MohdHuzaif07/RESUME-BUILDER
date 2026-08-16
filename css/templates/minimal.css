@@ -1,0 +1,199 @@
+/* Minimal Resume Template Styles */
+
+.resume--minimal {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  font-size: 0.84rem;
+  line-height: 1.45;
+  color: #27272a;
+  background-color: #ffffff;
+  padding: 2.25rem;
+  box-sizing: border-box;
+}
+
+.resume--minimal .resume-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.25rem;
+  padding-bottom: 1.25rem;
+  margin-bottom: 1.25rem;
+  border-bottom: 1px solid #e4e4e7;
+}
+
+.resume--minimal .resume-photo {
+  flex-shrink: 0;
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.resume--minimal .resume-header-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.resume--minimal .resume-name {
+  margin: 0 0 0.15rem;
+  font-size: 1.65rem;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  color: #09090b;
+}
+
+.resume--minimal .resume-title {
+  margin: 0 0 0.5rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #71717a;
+}
+
+.resume--minimal .resume-contact,
+.resume--minimal .resume-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 0.875rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.78rem;
+  color: #71717a;
+}
+
+.resume--minimal .resume-links {
+  margin-top: 0.25rem;
+}
+
+.resume--minimal .resume-links a {
+  color: #18181b;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.resume--minimal .resume-section {
+  margin-bottom: 1.15rem;
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+
+.resume--minimal .resume-section:last-child {
+  margin-bottom: 0;
+}
+
+.resume--minimal .resume-section-title {
+  margin: 0 0 0.5rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #71717a;
+  border-bottom: 1px solid #f4f4f5;
+  padding-bottom: 0.2rem;
+}
+
+.resume--minimal .resume-summary {
+  margin: 0;
+  color: #3f3f46;
+}
+
+.resume--minimal .resume-entry {
+  margin-bottom: 0.75rem;
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+
+.resume--minimal .resume-entry:last-child {
+  margin-bottom: 0;
+}
+
+.resume--minimal .resume-entry-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+}
+
+.resume--minimal .resume-entry-title {
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #09090b;
+}
+
+.resume--minimal .resume-entry-title a {
+  color: #09090b;
+  text-decoration: underline;
+}
+
+.resume--minimal .resume-entry-date {
+  font-size: 0.75rem;
+  color: #a1a1aa;
+}
+
+.resume--minimal .resume-entry-subtitle {
+  margin: 0.05rem 0 0.2rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: #52525b;
+}
+
+.resume--minimal .resume-entry-meta {
+  margin: 0 0 0.2rem;
+  font-size: 0.75rem;
+  color: #71717a;
+}
+
+.resume--minimal .resume-entry-description {
+  margin: 0.2rem 0 0;
+  font-size: 0.78rem;
+  color: #3f3f46;
+}
+
+.resume--minimal .resume-entry-description ul,
+.resume--minimal .resume-summary ul {
+  margin: 0.2rem 0 0;
+  padding-left: 1.1rem;
+}
+
+.resume--minimal .resume-skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.resume--minimal .resume-skill {
+  padding: 0.15rem 0.4rem;
+  font-size: 0.72rem;
+  color: #27272a;
+  background-color: #f4f4f5;
+  border-radius: 3px;
+}
+
+.resume--minimal .resume-list {
+  margin: 0;
+  padding-left: 1.1rem;
+}
+
+.resume--minimal .resume-list li {
+  margin-bottom: 0.25rem;
+  font-size: 0.78rem;
+}
+
+.resume--minimal .resume-language {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 0.25rem;
+  font-size: 0.78rem;
+}
+
+.resume--minimal .resume-language-name {
+  font-weight: 500;
+}
+
+.resume--minimal .resume-language-level {
+  color: #71717a;
+}

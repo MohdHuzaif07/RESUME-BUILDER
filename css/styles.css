@@ -384,6 +384,25 @@ textarea.invalid:focus {
   border-color: var(--color-primary-hover);
 }
 
+.btn-loading {
+  opacity: 0.8;
+  cursor: wait;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.spinner {
+  animation: spin 0.8s linear infinite;
+}
+
+
 .btn-secondary {
   color: var(--color-text);
   background-color: var(--color-surface);
@@ -582,6 +601,7 @@ textarea.invalid:focus {
 
   #resume-preview {
     padding: 0 !important;
+    margin: 0 !important;
     border: none !important;
     box-shadow: none !important;
   }
@@ -590,9 +610,41 @@ textarea.invalid:focus {
     display: none !important;
   }
 
+  /* Table-based print margins to support page breaks without browser header/footers */
+  .print-table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+    border: none !important;
+    background: transparent !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .print-table tr,
+  .print-table td {
+    border: none !important;
+    background: transparent !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .print-header-space {
+    height: 14mm !important; /* 14mm + 1mm page margin = 15mm top margin */
+  }
+
+  .print-footer-space {
+    height: 14mm !important; /* 14mm + 1mm page margin = 15mm bottom margin */
+  }
+
+  .print-content-cell {
+    padding-left: 19mm !important;  /* 19mm + 1mm page margin = 20mm left margin */
+    padding-right: 19mm !important; /* 19mm + 1mm page margin = 20mm right margin */
+    vertical-align: top !important;
+  }
+
   @page {
     size: A4 portrait;
-    margin: 12mm 15mm;
+    margin: 1mm !important; /* Non-zero to preserve hyperlinks, but too small for browser headers/footers */
   }
 }
 

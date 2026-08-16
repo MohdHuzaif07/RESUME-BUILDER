@@ -6,6 +6,11 @@
   <title>Resume Builder</title>
   <link rel="stylesheet" href="css/styles.css">
   <link rel="stylesheet" href="css/resume.css">
+  <link rel="stylesheet" href="css/templates/default.css">
+  <link rel="stylesheet" href="css/templates/modern.css">
+  <link rel="stylesheet" href="css/templates/classic.css">
+  <link rel="stylesheet" href="css/templates/minimal.css">
+  <link rel="stylesheet" href="css/templates/executive.css">
 </head>
 <body>
   <header class="app-header">
@@ -263,9 +268,11 @@
           <div class="form-group">
             <label for="template">Template</label>
             <select id="template" name="template">
-              <option value="default" selected>Default</option>
-              <option value="modern" disabled>Modern (coming soon)</option>
-              <option value="classic" disabled>Classic (coming soon)</option>
+              <option value="default" selected>Default (Modern Professional)</option>
+              <option value="modern">Modern (Creative Accent)</option>
+              <option value="classic">Classic (Serif Executive)</option>
+              <option value="minimal">Minimal (Clean Compact)</option>
+              <option value="executive">Executive (Corporate Hero)</option>
             </select>
           </div>
         </fieldset>
@@ -275,7 +282,7 @@
     <section class="preview-panel" aria-label="Resume preview">
       <div class="preview-panel-header">
         <h2>Preview</h2>
-        <button type="button" id="download-pdf" class="btn btn-primary" aria-label="Download resume as PDF">
+        <button type="button" id="download-pdf-btn" class="btn btn-primary" aria-label="Download resume as PDF">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="margin-right: 4px;">
             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
             <polyline points="7 10 12 15 17 10"></polyline>
@@ -507,10 +514,21 @@
     </article>
   </template>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.2/html2pdf.bundle.min.js" integrity="sha512-MpDFIChbcXl2QgipQrt1VkPREOQ9bBBskThiqgPH2PGUE/1sBsruHHkSfmhHNbIjMmEgYYm0MaVBMHGWOsqtQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <!-- External PDF Generation Libraries -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+  <!-- Application Modules -->
   <script src="js/state.js"></script>
   <script src="js/validation.js"></script>
   <script src="js/preview.js"></script>
+  <script src="js/pdf.js"></script>
+  <script src="js/templates/default.js"></script>
+  <script src="js/templates/modern.js"></script>
+  <script src="js/templates/classic.js"></script>
+  <script src="js/templates/minimal.js"></script>
+  <script src="js/templates/executive.js"></script>
   <script src="js/main.js"></script>
 </body>
 </html>
+
