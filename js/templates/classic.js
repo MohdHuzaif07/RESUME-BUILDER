@@ -313,18 +313,32 @@
         certifications = [],
         achievements = [],
         languages = [],
+        sectionOrder = [
+          "summary",
+          "education",
+          "experience",
+          "projects",
+          "skills",
+          "certifications",
+          "achievements",
+          "languages",
+        ],
       } = state;
+
+      const sectionMap = {
+        summary: renderSummaryHtml(personalInfo.summary),
+        education: renderEducationHtml(education),
+        experience: renderExperienceHtml(experience),
+        projects: renderProjectsHtml(projects),
+        skills: renderSkillsHtml(skills),
+        certifications: renderCertificationsHtml(certifications),
+        achievements: renderAchievementsHtml(achievements),
+        languages: renderLanguagesHtml(languages),
+      };
 
       const sections = [
         renderHeaderHtml(personalInfo),
-        renderSummaryHtml(personalInfo.summary),
-        renderEducationHtml(education),
-        renderExperienceHtml(experience),
-        renderSkillsHtml(skills),
-        renderProjectsHtml(projects),
-        renderCertificationsHtml(certifications),
-        renderAchievementsHtml(achievements),
-        renderLanguagesHtml(languages),
+        ...sectionOrder.map((key) => sectionMap[key] || ""),
       ].filter(Boolean);
 
       return sections.join("");

@@ -80,9 +80,14 @@
   margin-top: 0.2rem;
 }
 
-.resume--executive .resume-links a {
-  color: #111111;
-  text-decoration: underline;
+.resume--executive a {
+  color: inherit;
+  text-decoration: none !important;
+  border-bottom: 1px dotted currentColor;
+}
+
+.resume--executive a:hover {
+  border-bottom-style: solid;
 }
 
 .resume--executive .resume-body-grid {
@@ -117,6 +122,8 @@
   color: #111111;
   border-bottom: 1px solid #111111;
   letter-spacing: 0.04em;
+  page-break-after: avoid;
+  break-after: avoid;
 }
 
 .resume--executive .resume-summary {

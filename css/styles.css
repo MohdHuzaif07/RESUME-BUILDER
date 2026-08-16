@@ -142,6 +142,95 @@ body {
   letter-spacing: 0.01em;
 }
 
+/* Section Reordering Controls */
+
+.form-section-reorderable {
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+
+.form-section-reorderable.dragging {
+  opacity: 0.5;
+  border-style: dashed;
+  border-color: var(--color-primary);
+  background-color: #eff6ff;
+}
+
+.form-section-reorderable.drag-over {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px var(--color-primary);
+}
+
+.reorder-legend {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  width: calc(100% - 0.5rem);
+  padding: 0 var(--spacing-xs);
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-text);
+  user-select: none;
+}
+
+.reorder-drag-handle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.15rem 0.25rem;
+  color: #8a94a6;
+  cursor: grab;
+  border-radius: var(--radius-sm);
+  transition: color var(--transition), background-color var(--transition);
+}
+
+.reorder-drag-handle:hover {
+  color: var(--color-primary);
+  background-color: #e8edf2;
+}
+
+.reorder-drag-handle:active {
+  cursor: grabbing;
+}
+
+.section-title-text {
+  flex: 1;
+}
+
+.section-reorder-btns {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.btn-section-move {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  padding: 0;
+  font-size: 0.7rem;
+  color: var(--color-text-subtle);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: color var(--transition), background-color var(--transition), border-color var(--transition);
+}
+
+.btn-section-move:hover:not(:disabled) {
+  color: var(--color-primary);
+  border-color: var(--color-primary);
+  background-color: #eff6ff;
+}
+
+.btn-section-move:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  border-color: var(--color-border);
+  color: var(--color-text-subtle);
+}
+
 /* Form groups */
 
 .form-group {

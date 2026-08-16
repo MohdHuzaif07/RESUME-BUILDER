@@ -87,9 +87,14 @@
   display: inline;
 }
 
-.resume--classic .resume-contact a {
-  color: #111111;
-  text-decoration: underline;
+.resume--classic a {
+  color: inherit;
+  text-decoration: none !important;
+  border-bottom: 1px dotted currentColor;
+}
+
+.resume--classic a:hover {
+  border-bottom-style: solid;
 }
 
 .resume--classic .resume-section {
@@ -112,6 +117,8 @@
   letter-spacing: 0.06em;
   color: #000000;
   border-bottom: 1px solid #333333;
+  page-break-after: avoid;
+  break-after: avoid;
 }
 
 .resume--classic .resume-summary {

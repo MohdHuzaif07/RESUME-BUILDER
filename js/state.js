@@ -86,6 +86,16 @@ const resumeState = {
   certifications: [],
   achievements: [],
   languages: [],
+  sectionOrder: [
+    "summary",
+    "education",
+    "experience",
+    "projects",
+    "skills",
+    "certifications",
+    "achievements",
+    "languages",
+  ],
   template: "default",
 };
 

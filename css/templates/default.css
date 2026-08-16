@@ -68,9 +68,14 @@
   margin-bottom: 0.35rem;
 }
 
-.resume--default .resume-sidebar-panel a {
-  color: #88c0d0;
-  text-decoration: underline;
+.resume--default a {
+  color: inherit;
+  text-decoration: none !important;
+  border-bottom: 1px dotted currentColor;
+}
+
+.resume--default a:hover {
+  border-bottom-style: solid;
 }
 
 .resume--default .resume-sidebar-panel .resume-section-title {
@@ -124,6 +129,8 @@
   font-weight: 700;
   color: #111111;
   border-bottom: 1px solid #111111;
+  page-break-after: avoid;
+  break-after: avoid;
 }
 
 .resume--default .resume-summary {

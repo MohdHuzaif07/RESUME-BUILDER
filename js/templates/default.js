@@ -292,15 +292,32 @@
         certifications = [],
         achievements = [],
         languages = [],
+        sectionOrder = [
+          "summary",
+          "education",
+          "experience",
+          "projects",
+          "skills",
+          "certifications",
+          "achievements",
+          "languages",
+        ],
       } = state;
 
-      const mainSections = [
-        renderSummaryHtml(personalInfo.summary),
-        renderEducationHtml(education),
-        renderExperienceHtml(experience),
-        renderProjectsHtml(projects),
-        renderAchievementsHtml(achievements),
-      ].filter(Boolean);
+      const sectionMap = {
+        summary: renderSummaryHtml(personalInfo.summary),
+        education: renderEducationHtml(education),
+        experience: renderExperienceHtml(experience),
+        projects: renderProjectsHtml(projects),
+        achievements: renderAchievementsHtml(achievements),
+      };
+
+      const mainKeys = ["summary", "education", "experience", "projects", "achievements"];
+
+      const mainSections = sectionOrder
+        .filter((k) => mainKeys.includes(k))
+        .map((k) => sectionMap[k] || "")
+        .filter(Boolean);
 
       return `
         <div class="resume-container">

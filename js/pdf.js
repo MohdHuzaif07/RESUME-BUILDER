@@ -1,6 +1,62 @@
 /**
- * Direct Client-Side High-Speed PDF Exporter with Clickable Link Annotations
+ * Direct Client-Side High-Speed PDF Exporter with Proper Multi-Page Alignment & Item-Level Page Breaks
  */
+
+function getPageBreaks(previewEl, canvas, canvasPageHeight) {
+  const containerRect = previewEl.getBoundingClientRect();
+  if (!containerRect.height) return [0, canvas.height];
+
+  // Scale ratio from DOM coordinates to Canvas pixel coordinates
+  const scale = canvas.height / containerRect.height;
+
+  // Find all individual breakable item elements:
+  // (.resume-entry, .resume-sidebar-entry, .resume-language, .resume-section-title, .resume-section, p, li)
+  const elements = Array.from(
+    previewEl.querySelectorAll(
+      ".resume-entry, .resume-sidebar-entry, .resume-language, .resume-section-title, .resume-section, p, li"
+    )
+  );
+
+  const blocks = elements
+    .map((el) => {
+      const rect = el.getBoundingClientRect();
+      const top = (rect.top - containerRect.top) * scale;
+      const bottom = (rect.bottom - containerRect.top) * scale;
+      return { top, bottom, height: bottom - top };
+    })
+    .filter((b) => b.height > 0)
+    .sort((a, b) => a.top - b.top);
+
+  const breaks = [0];
+  let currentY = 0;
+  const totalCanvasHeight = canvas.height;
+
+  while (currentY + canvasPageHeight < totalCanvasHeight - 15) {
+    const idealY = currentY + canvasPageHeight;
+    let actualY = idealY;
+
+    // Find the specific item element that crosses idealY
+    for (const b of blocks) {
+      if (b.top < idealY && b.bottom > idealY) {
+        // Break 4px above this specific item if it started after currentY
+        if (b.top > currentY + 25) {
+          actualY = b.top - 4;
+        }
+        break;
+      }
+    }
+
+    if (actualY <= currentY) {
+      actualY = idealY;
+    }
+
+    breaks.push(actualY);
+    currentY = actualY;
+  }
+
+  breaks.push(totalCanvasHeight);
+  return breaks;
+}
 
 async function downloadResumePdf() {
   const previewEl = document.getElementById("resume-preview");
@@ -34,9 +90,9 @@ async function downloadResumePdf() {
   }
 
   try {
-    // Speed-optimized canvas rendering flags
+    // Ultra High-Definition (Scale 3) crisp canvas rendering
     const canvas = await html2canvas(previewEl, {
-      scale: 2,
+      scale: 3,
       useCORS: true,
       allowTaint: true,
       logging: false,
@@ -44,16 +100,12 @@ async function downloadResumePdf() {
       backgroundColor: "#ffffff",
     });
 
-    const imgData = canvas.toDataURL("image/jpeg", 0.95);
-
     // Standard A4 dimensions in points (72 points per inch)
     const pdfWidth = 595.28;
     const pdfHeight = 841.89;
 
-    const containerWidth = previewEl.offsetWidth || canvas.width / 2;
-    const containerHeight = previewEl.offsetHeight || canvas.height / 2;
+    const containerWidth = previewEl.offsetWidth || canvas.width / 3;
     const ratio = pdfWidth / containerWidth;
-    const totalPdfHeight = containerHeight * ratio;
 
     const pdf = new jsPDF({
       orientation: "portrait",
@@ -62,47 +114,52 @@ async function downloadResumePdf() {
       compress: true,
     });
 
-    const pageCount = Math.ceil(totalPdfHeight / pdfHeight);
+    const canvasPageHeight = (pdfHeight / pdfWidth) * canvas.width;
+    const breaks = getPageBreaks(previewEl, canvas, canvasPageHeight);
+    const pageCount = breaks.length - 1;
 
-    if (pageCount <= 1) {
-      pdf.addImage(imgData, "JPEG", 0, 0, pdfWidth, totalPdfHeight, undefined, "FAST");
-    } else {
-      // Slicing canvas across pages if document height exceeds single A4
-      const canvasPageHeight = (pdfHeight / pdfWidth) * canvas.width;
+    const pageTopMarginPt = 24; // Elegant 24pt top margin for Page 2+
 
-      for (let i = 0; i < pageCount; i++) {
-        if (i > 0) pdf.addPage();
+    for (let i = 0; i < pageCount; i++) {
+      if (i > 0) pdf.addPage();
 
-        const pageCanvas = document.createElement("canvas");
-        pageCanvas.width = canvas.width;
-        pageCanvas.height = Math.min(canvasPageHeight, canvas.height - i * canvasPageHeight);
+      const startY = breaks[i];
+      const endY = breaks[i + 1];
+      const sliceHeight = endY - startY;
 
-        const ctx = pageCanvas.getContext("2d");
-        if (ctx) {
-          ctx.fillStyle = "#ffffff";
-          ctx.fillRect(0, 0, pageCanvas.width, pageCanvas.height);
-          ctx.drawImage(
-            canvas,
-            0,
-            i * canvasPageHeight,
-            canvas.width,
-            pageCanvas.height,
-            0,
-            0,
-            canvas.width,
-            pageCanvas.height
-          );
-        }
+      const pageCanvas = document.createElement("canvas");
+      pageCanvas.width = canvas.width;
+      pageCanvas.height = sliceHeight;
 
-        const pageImgData = pageCanvas.toDataURL("image/jpeg", 0.95);
-        const slicePdfHeight = (pageCanvas.height / canvas.width) * pdfWidth;
-        pdf.addImage(pageImgData, "JPEG", 0, 0, pdfWidth, slicePdfHeight, undefined, "FAST");
+      const ctx = pageCanvas.getContext("2d");
+      if (ctx) {
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(0, 0, pageCanvas.width, pageCanvas.height);
+        ctx.drawImage(
+          canvas,
+          0,
+          startY,
+          canvas.width,
+          sliceHeight,
+          0,
+          0,
+          canvas.width,
+          sliceHeight
+        );
       }
+
+      const pageImgData = pageCanvas.toDataURL("image/jpeg", 0.98);
+      const slicePdfHeight = (sliceHeight / canvas.width) * pdfWidth;
+
+      // Page 1 starts at Y=0; Page 2+ starts at Y=pageTopMarginPt for proper top spacing
+      const renderY = i === 0 ? 0 : pageTopMarginPt;
+      pdf.addImage(pageImgData, "JPEG", 0, renderY, pdfWidth, slicePdfHeight, undefined, "FAST");
     }
 
-    // MAP CLICKABLE HYPERLINKS ONTO PDF
+    // MAP CLICKABLE HYPERLINKS ONTO PDF WITH ITEM-LEVEL OFFSETS & TOP MARGIN
     const links = previewEl.querySelectorAll("a[href]");
     const containerRect = previewEl.getBoundingClientRect();
+    const scale = canvas.height / containerRect.height;
 
     links.forEach((a) => {
       const href = a.getAttribute("href");
@@ -112,19 +169,27 @@ async function downloadResumePdf() {
       if (rect.width === 0 || rect.height === 0) return;
 
       const relLeft = rect.left - containerRect.left;
-      const relTop = rect.top - containerRect.top;
+      const relTopCanvas = (rect.top - containerRect.top) * scale;
 
+      // Find page slice index for this link
+      let pageIdx = 0;
+      for (let i = 0; i < pageCount; i++) {
+        if (relTopCanvas >= breaks[i] && relTopCanvas < breaks[i + 1]) {
+          pageIdx = i;
+          break;
+        }
+      }
+
+      const pageTopCanvas = relTopCanvas - breaks[pageIdx];
+      const topOffsetPt = pageIdx === 0 ? 0 : pageTopMarginPt;
       const pdfX = relLeft * ratio;
-      const pdfY = relTop * ratio;
+      const pdfY = (pageTopCanvas / scale) * ratio + topOffsetPt;
       const pdfW = rect.width * ratio;
       const pdfH = rect.height * ratio;
 
-      const targetPageIndex = Math.floor(pdfY / pdfHeight);
-      const pageY = pdfY % pdfHeight;
-
-      if (targetPageIndex < pageCount) {
-        pdf.setPage(targetPageIndex + 1);
-        pdf.link(pdfX, pageY, pdfW, pdfH, { url: href });
+      if (pageIdx < pageCount) {
+        pdf.setPage(pageIdx + 1);
+        pdf.link(pdfX, pdfY, pdfW, pdfH, { url: href });
       }
     });
 

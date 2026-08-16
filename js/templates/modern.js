@@ -295,22 +295,41 @@
         certifications = [],
         achievements = [],
         languages = [],
+        sectionOrder = [
+          "summary",
+          "education",
+          "experience",
+          "projects",
+          "skills",
+          "certifications",
+          "achievements",
+          "languages",
+        ],
       } = state;
+
+      const sectionMap = {
+        summary: renderSummaryHtml(personalInfo.summary),
+        education: renderEducationHtml(education),
+        experience: renderExperienceHtml(experience),
+        projects: renderProjectsHtml(projects),
+        skills: renderSkillsHtml(skills),
+        certifications: renderCertificationsSidebarHtml(certifications),
+        languages: renderLanguagesSidebarHtml(languages),
+        achievements: renderAchievementsSidebarHtml(achievements),
+      };
+
+      const mainKeys = ["summary", "education", "experience", "projects", "skills"];
+      const sidebarKeys = ["certifications", "languages", "achievements"];
 
       const mainSections = [
         renderHeaderHtml(personalInfo),
-        renderSummaryHtml(personalInfo.summary),
-        renderEducationHtml(education),
-        renderExperienceHtml(experience),
-        renderProjectsHtml(projects),
-        renderSkillsHtml(skills),
+        ...sectionOrder.filter((k) => mainKeys.includes(k)).map((k) => sectionMap[k] || ""),
       ].filter(Boolean);
 
-      const sidebarSections = [
-        renderCertificationsSidebarHtml(certifications),
-        renderLanguagesSidebarHtml(languages),
-        renderAchievementsSidebarHtml(achievements),
-      ].filter(Boolean);
+      const sidebarSections = sectionOrder
+        .filter((k) => sidebarKeys.includes(k))
+        .map((k) => sectionMap[k] || "")
+        .filter(Boolean);
 
       return `
         <div class="resume-container">

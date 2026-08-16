@@ -305,21 +305,41 @@
         certifications = [],
         achievements = [],
         languages = [],
+        sectionOrder = [
+          "summary",
+          "education",
+          "experience",
+          "projects",
+          "skills",
+          "certifications",
+          "achievements",
+          "languages",
+        ],
       } = state;
 
-      const leftSections = [
-        renderCertificationsHtml(certifications),
-        renderLanguagesHtml(languages),
-        renderSkillsHtml(skills),
-      ].filter(Boolean);
+      const sectionMap = {
+        summary: renderSummaryHtml(personalInfo.summary),
+        education: renderEducationHtml(education),
+        experience: renderExperienceHtml(experience),
+        projects: renderProjectsHtml(projects),
+        skills: renderSkillsHtml(skills),
+        certifications: renderCertificationsHtml(certifications),
+        languages: renderLanguagesHtml(languages),
+        achievements: renderAchievementsHtml(achievements),
+      };
 
-      const rightSections = [
-        renderSummaryHtml(personalInfo.summary),
-        renderEducationHtml(education),
-        renderExperienceHtml(experience),
-        renderProjectsHtml(projects),
-        renderAchievementsHtml(achievements),
-      ].filter(Boolean);
+      const leftKeys = ["certifications", "languages", "skills"];
+      const rightKeys = ["summary", "education", "experience", "projects", "achievements"];
+
+      const leftSections = sectionOrder
+        .filter((k) => leftKeys.includes(k))
+        .map((k) => sectionMap[k] || "")
+        .filter(Boolean);
+
+      const rightSections = sectionOrder
+        .filter((k) => rightKeys.includes(k))
+        .map((k) => sectionMap[k] || "")
+        .filter(Boolean);
 
       return `
         ${renderBannerHtml(personalInfo)}
