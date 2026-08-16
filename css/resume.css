@@ -9,8 +9,16 @@
   color: #1a1a1a;
   background-color: #fff;
   padding: 2rem;
-  min-height: 100%;
+  width: 100%;
+  max-width: 794px;
+  min-height: 1123px;
+  aspect-ratio: 210 / 297;
+  margin: 0 auto;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+  box-sizing: border-box;
+  position: relative;
 }
+
 
 /* Header */
 

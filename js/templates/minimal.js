@@ -109,7 +109,7 @@
 
     return `
       <section class="resume-section">
-        <h2 class="resume-section-title">Experience</h2>
+        <h2 class="resume-section-title">Work Experience</h2>
         ${items}
       </section>
     `;
@@ -173,12 +173,16 @@
             : `<h3 class="resume-entry-title">${escapeHtml(entry.name)}</h3>`
           : "";
 
+        const techHtml = hasText(entry.technologies)
+          ? `<span class="resume-entry-date">${escapeHtml(entry.technologies)}</span>`
+          : "";
+
         return `
           <div class="resume-entry">
-            ${titleHtml ? `<div class="resume-entry-header">${titleHtml}</div>` : ""}
-            ${hasText(entry.technologies)
-              ? `<p class="resume-entry-meta">${escapeHtml(entry.technologies)}</p>`
-              : ""}
+            <div class="resume-entry-header">
+              ${titleHtml}
+              ${techHtml}
+            </div>
             ${hasText(entry.description)
               ? `<div class="resume-entry-description">${formatRichText(entry.description)}</div>`
               : ""}
@@ -298,29 +302,25 @@
 
     if (!entries.length) return "";
 
-    const items = entries
-      .map(
-        (entry) => `
-          <div class="resume-language">
-            <span class="resume-language-name">${escapeHtml(entry.language)}</span>
-            ${hasText(entry.proficiency)
-              ? `<span class="resume-language-level">${escapeHtml(formatProficiency(entry.proficiency))}</span>`
-              : ""}
-          </div>
-        `
-      )
-      .join("");
+    const langItems = entries
+      .map((entry) => {
+        const prof = hasText(entry.proficiency)
+          ? ` (${escapeHtml(formatProficiency(entry.proficiency))})`
+          : "";
+        return `<strong>${escapeHtml(entry.language)}</strong>${prof}`;
+      })
+      .join(" • ");
 
     return `
       <section class="resume-section">
         <h2 class="resume-section-title">Languages</h2>
-        ${items}
+        <p class="resume-summary">${langItems}</p>
       </section>
     `;
   }
 
   window.ResumeTemplates["minimal"] = {
-    name: "Minimal",
+    name: "Clean Minimalist",
     render: function (state) {
       const {
         personalInfo = {},

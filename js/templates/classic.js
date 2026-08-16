@@ -1,5 +1,5 @@
 /**
- * Classic Resume Template Renderer
+ * Classic / Master LaTeX Single-Column Template Renderer (Reference Image 5)
  */
 
 (function () {
@@ -19,12 +19,9 @@
     } = personalInfo;
 
     const contactItems = [
-      hasText(email) ? `<li>${escapeHtml(email)}</li>` : "",
       hasText(phone) ? `<li>${escapeHtml(phone)}</li>` : "",
+      hasText(email) ? `<li><a href="mailto:${escapeHtml(email)}">${escapeHtml(email)}</a></li>` : "",
       hasText(location) ? `<li>${escapeHtml(location)}</li>` : "",
-    ].filter(Boolean);
-
-    const linkItems = [
       safeHref(linkedin)
         ? `<li><a href="${safeHref(linkedin)}" target="_blank" rel="noopener noreferrer">LinkedIn</a></li>`
         : "",
@@ -36,27 +33,21 @@
         : "",
     ].filter(Boolean);
 
-    const hasHeaderContent =
-      hasText(fullName) ||
-      hasText(jobTitle) ||
-      contactItems.length > 0 ||
-      linkItems.length > 0 ||
-      hasText(profileImage);
-
-    if (!hasHeaderContent) return "";
+    if (!hasText(fullName) && !hasText(jobTitle) && !contactItems.length && !hasText(profileImage)) {
+      return "";
+    }
 
     const photoHtml = hasText(profileImage)
       ? `<img class="resume-photo" src="${escapeHtml(profileImage)}" alt="Profile photo">`
       : "";
 
     return `
-      <header class="resume-header">
+      <header class="resume-header ${hasText(profileImage) ? 'has-photo' : ''}">
         ${photoHtml}
         <div class="resume-header-content">
           ${hasText(fullName) ? `<h1 class="resume-name">${escapeHtml(fullName)}</h1>` : ""}
           ${hasText(jobTitle) ? `<p class="resume-title">${escapeHtml(jobTitle)}</p>` : ""}
-          ${contactItems.length ? `<ul class="resume-contact">${contactItems.join(" • ")}</ul>` : ""}
-          ${linkItems.length ? `<ul class="resume-links">${linkItems.join(" • ")}</ul>` : ""}
+          ${contactItems.length ? `<ul class="resume-contact">${contactItems.join(" | ")}</ul>` : ""}
         </div>
       </header>
     `;
@@ -67,8 +58,50 @@
 
     return `
       <section class="resume-section">
-        <h2 class="resume-section-title">Professional Summary</h2>
+        <h2 class="resume-section-title">Summary</h2>
         <div class="resume-summary">${formatRichText(summary)}</div>
+      </section>
+    `;
+  }
+
+  function renderEducationHtml(education = []) {
+    const entries = education.filter((entry) =>
+      entryHasContent(entry, ["institution", "degree", "startDate", "endDate", "description"])
+    );
+
+    if (!entries.length) return "";
+
+    const items = entries
+      .map((entry) => {
+        const dateRange = formatDateRange(
+          entry.startDate,
+          entry.endDate,
+          Boolean(entry.currentlyStudying)
+        );
+
+        return `
+          <div class="resume-entry">
+            <div class="resume-entry-header">
+              ${hasText(entry.degree)
+                ? `<h3 class="resume-entry-title">${escapeHtml(entry.degree)}</h3>`
+                : `<h3 class="resume-entry-title">${escapeHtml(entry.institution || "Education")}</h3>`}
+              ${dateRange ? `<span class="resume-entry-date">${dateRange}</span>` : ""}
+            </div>
+            ${hasText(entry.institution)
+              ? `<p class="resume-entry-subtitle">${escapeHtml(entry.institution)}</p>`
+              : ""}
+            ${hasText(entry.description)
+              ? `<div class="resume-entry-description">${formatRichText(entry.description)}</div>`
+              : ""}
+          </div>
+        `;
+      })
+      .join("");
+
+    return `
+      <section class="resume-section">
+        <h2 class="resume-section-title">Education</h2>
+        ${items}
       </section>
     `;
   }
@@ -93,12 +126,10 @@
             <div class="resume-entry-header">
               ${hasText(entry.jobTitle)
                 ? `<h3 class="resume-entry-title">${escapeHtml(entry.jobTitle)}</h3>`
-                : `<h3 class="resume-entry-title">${escapeHtml(entry.company || "Experience")}</h3>`}
-              ${dateRange ? `<span class="resume-entry-date">${dateRange}</span>` : ""}
+                : `<h3 class="resume-entry-title">${escapeHtml(entry.company || "Internship")}</h3>`}
+              ${hasText(entry.company) ? `<span class="resume-entry-date">${escapeHtml(entry.company)}</span>` : ""}
             </div>
-            ${hasText(entry.company) && hasText(entry.jobTitle)
-              ? `<p class="resume-entry-subtitle">${escapeHtml(entry.company)}</p>`
-              : ""}
+            ${dateRange ? `<p class="resume-entry-subtitle">${dateRange}</p>` : ""}
             ${hasText(entry.description)
               ? `<div class="resume-entry-description">${formatRichText(entry.description)}</div>`
               : ""}
@@ -115,44 +146,14 @@
     `;
   }
 
-  function renderEducationHtml(education = []) {
-    const entries = education.filter((entry) =>
-      entryHasContent(entry, ["institution", "degree", "startDate", "endDate", "description"])
-    );
-
-    if (!entries.length) return "";
-
-    const items = entries
-      .map((entry) => {
-        const dateRange = formatDateRange(
-          entry.startDate,
-          entry.endDate,
-          Boolean(entry.currentlyStudying)
-        );
-
-        return `
-          <div class="resume-entry">
-            <div class="resume-entry-header">
-              ${hasText(entry.institution)
-                ? `<h3 class="resume-entry-title">${escapeHtml(entry.institution)}</h3>`
-                : `<h3 class="resume-entry-title">${escapeHtml(entry.degree || "Education")}</h3>`}
-              ${dateRange ? `<span class="resume-entry-date">${dateRange}</span>` : ""}
-            </div>
-            ${hasText(entry.degree)
-              ? `<p class="resume-entry-subtitle">${escapeHtml(entry.degree)}</p>`
-              : ""}
-            ${hasText(entry.description)
-              ? `<div class="resume-entry-description">${formatRichText(entry.description)}</div>`
-              : ""}
-          </div>
-        `;
-      })
-      .join("");
+  function renderSkillsHtml(skills) {
+    const skillList = normalizeSkills(skills);
+    if (!skillList.length) return "";
 
     return `
       <section class="resume-section">
-        <h2 class="resume-section-title">Education</h2>
-        ${items}
+        <h2 class="resume-section-title">Technical Skills</h2>
+        <p class="resume-summary">${skillList.map(s => escapeHtml(s)).join(", ")}</p>
       </section>
     `;
   }
@@ -175,10 +176,12 @@
 
         return `
           <div class="resume-entry">
-            ${titleHtml ? `<div class="resume-entry-header">${titleHtml}</div>` : ""}
-            ${hasText(entry.technologies)
-              ? `<p class="resume-entry-meta">Key Technologies: ${escapeHtml(entry.technologies)}</p>`
-              : ""}
+            <div class="resume-entry-header">
+              ${titleHtml}
+              ${hasText(entry.technologies)
+                ? `<span class="resume-entry-date">${escapeHtml(entry.technologies)}</span>`
+                : ""}
+            </div>
             ${hasText(entry.description)
               ? `<div class="resume-entry-description">${formatRichText(entry.description)}</div>`
               : ""}
@@ -191,22 +194,6 @@
       <section class="resume-section">
         <h2 class="resume-section-title">Projects</h2>
         ${items}
-      </section>
-    `;
-  }
-
-  function renderSkillsHtml(skills) {
-    const skillList = normalizeSkills(skills);
-    if (!skillList.length) return "";
-
-    const items = skillList
-      .map((skill) => `<li class="resume-skill">${escapeHtml(skill)}</li>`)
-      .join("");
-
-    return `
-      <section class="resume-section">
-        <h2 class="resume-section-title">Technical Skills</h2>
-        <ul class="resume-skills">${items}</ul>
       </section>
     `;
   }
@@ -267,25 +254,20 @@
 
     const items = entries
       .map((entry) => {
-        const dateLabel = formatMonthYear(entry.date);
         const titleLine = hasText(entry.title)
-          ? `<span class="resume-list-item-title">${escapeHtml(entry.title)}</span>`
+          ? `<strong>${escapeHtml(entry.title)}</strong>`
           : "";
-        const dateLine = dateLabel
-          ? ` <span class="resume-list-item-date">(${dateLabel})</span>`
-          : "";
-
         const descriptionLine = hasText(entry.description)
-          ? `<div class="resume-entry-description">${formatRichText(entry.description)}</div>`
+          ? `<br>${formatRichText(entry.description)}`
           : "";
 
-        return `<li>${titleLine}${dateLine}${descriptionLine}</li>`;
+        return `<li>${titleLine}${descriptionLine}</li>`;
       })
       .join("");
 
     return `
       <section class="resume-section">
-        <h2 class="resume-section-title">Key Achievements</h2>
+        <h2 class="resume-section-title">Achievements</h2>
         <ul class="resume-list">${items}</ul>
       </section>
     `;
@@ -320,7 +302,7 @@
   }
 
   window.ResumeTemplates["classic"] = {
-    name: "Classic",
+    name: "Master LaTeX (Single Column — Image 5)",
     render: function (state) {
       const {
         personalInfo = {},
@@ -336,10 +318,10 @@
       const sections = [
         renderHeaderHtml(personalInfo),
         renderSummaryHtml(personalInfo.summary),
-        renderExperienceHtml(experience),
         renderEducationHtml(education),
-        renderProjectsHtml(projects),
+        renderExperienceHtml(experience),
         renderSkillsHtml(skills),
+        renderProjectsHtml(projects),
         renderCertificationsHtml(certifications),
         renderAchievementsHtml(achievements),
         renderLanguagesHtml(languages),
