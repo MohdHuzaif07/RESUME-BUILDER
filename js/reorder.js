@@ -1,5 +1,5 @@
 /**
- * Form Section Drag-and-Drop & Arrow Key Reordering Controller
+ * Form Section Drag-and-Drop, Arrow Key Reordering, and Column Placement Controller
  */
 
 (function () {
@@ -32,6 +32,25 @@
       renderPreview();
     }
     updateMoveButtonsState();
+  }
+
+  function updateStateSectionColumns() {
+    const form = document.getElementById("resume-form");
+    if (!form) return;
+
+    const selects = form.querySelectorAll(".column-select");
+    selects.forEach((select) => {
+      const key = select.dataset.sectionKey;
+      const col = select.value;
+      if (key && typeof resumeState === "object" && resumeState) {
+        resumeState.sectionColumns = resumeState.sectionColumns || {};
+        resumeState.sectionColumns[key] = col;
+      }
+    });
+
+    if (typeof renderPreview === "function") {
+      renderPreview();
+    }
   }
 
   function updateMoveButtonsState() {
@@ -142,15 +161,24 @@
         moveSection(sec, "down");
       }
     });
+
+    // Delegate Column Assignment Dropdowns
+    form.addEventListener("change", (e) => {
+      if (e.target.classList.contains("column-select")) {
+        updateStateSectionColumns();
+      }
+    });
   }
 
   document.addEventListener("DOMContentLoaded", () => {
     setupDragAndDrop();
     updateMoveButtonsState();
+    updateStateSectionColumns();
   });
 
   window.initSectionReordering = function () {
     setupDragAndDrop();
     updateMoveButtonsState();
+    updateStateSectionColumns();
   };
 })();

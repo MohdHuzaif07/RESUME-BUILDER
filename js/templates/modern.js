@@ -1,5 +1,6 @@
 /**
  * Modern Resume Template Renderer (Right Dark Sidebar — Reference Image 2)
+ * Fully customizable main/sidebar column placement
  */
 
 (function () {
@@ -44,6 +45,8 @@
       </header>
     `;
   }
+
+  /* Main Panel Component Renderers */
 
   function renderSummaryHtml(summary) {
     if (!hasText(summary)) return "";
@@ -189,12 +192,178 @@
     return `
       <section class="resume-section">
         <h2 class="resume-section-title">Skills</h2>
-        <p class="resume-summary">${skillList.map(s => escapeHtml(s)).join(", ")}</p>
+        <p class="resume-summary">${skillList.map((s) => escapeHtml(s)).join(", ")}</p>
       </section>
     `;
   }
 
-  /* Right Dark Sidebar Components */
+  function renderCertificationsMainHtml(certifications = []) {
+    const entries = certifications.filter((entry) =>
+      entryHasContent(entry, ["name", "issuer", "issueDate", "expiryDate", "url"])
+    );
+
+    if (!entries.length) return "";
+
+    return `
+      <section class="resume-section">
+        <h2 class="resume-section-title">Certifications</h2>
+        ${entries
+          .map((entry) => {
+            const href = safeHref(entry.url);
+            const titleHtml = hasText(entry.name)
+              ? href
+                ? `<h3 class="resume-entry-title"><a href="${href}" target="_blank" rel="noopener noreferrer">${escapeHtml(entry.name)}</a></h3>`
+                : `<h3 class="resume-entry-title">${escapeHtml(entry.name)}</h3>`
+              : "";
+            return `
+              <div class="resume-entry">
+                ${titleHtml}
+                ${hasText(entry.issuer) ? `<p class="resume-entry-subtitle">${escapeHtml(entry.issuer)}</p>` : ""}
+              </div>
+            `;
+          })
+          .join("")}
+      </section>
+    `;
+  }
+
+  function renderLanguagesMainHtml(languages = []) {
+    const entries = languages.filter((entry) =>
+      entryHasContent(entry, ["language", "proficiency"])
+    );
+
+    if (!entries.length) return "";
+
+    const items = entries
+      .map(
+        (entry) =>
+          `<strong>${escapeHtml(entry.language)}</strong>${hasText(entry.proficiency) ? ` (${escapeHtml(formatProficiency(entry.proficiency))})` : ""}`
+      )
+      .join(" • ");
+
+    return `
+      <section class="resume-section">
+        <h2 class="resume-section-title">Languages</h2>
+        <p class="resume-summary">${items}</p>
+      </section>
+    `;
+  }
+
+  function renderAchievementsMainHtml(achievements = []) {
+    const entries = achievements.filter((entry) =>
+      entryHasContent(entry, ["title", "date", "description"])
+    );
+
+    if (!entries.length) return "";
+
+    const items = entries
+      .map((entry) => {
+        const titleLine = hasText(entry.title)
+          ? `<strong>${escapeHtml(entry.title)}</strong>`
+          : "";
+        const descriptionLine = hasText(entry.description)
+          ? `<br>${formatRichText(entry.description)}`
+          : "";
+
+        return `<li>${titleLine}${descriptionLine}</li>`;
+      })
+      .join("");
+
+    return `
+      <section class="resume-section">
+        <h2 class="resume-section-title">Achievements</h2>
+        <ul class="resume-list">${items}</ul>
+      </section>
+    `;
+  }
+
+  /* Right Dark Sidebar Component Renderers */
+
+  function renderSummarySidebarHtml(summary) {
+    if (!hasText(summary)) return "";
+
+    return `
+      <section class="resume-section">
+        <h2 class="resume-section-title">Summary</h2>
+        <div class="resume-summary" style="color: #ffffff;">${formatRichText(summary)}</div>
+      </section>
+    `;
+  }
+
+  function renderEducationSidebarHtml(education = []) {
+    const entries = education.filter((e) => entryHasContent(e, ["institution", "degree"]));
+    if (!entries.length) return "";
+
+    return `
+      <section class="resume-section">
+        <h2 class="resume-section-title">Education</h2>
+        ${entries
+          .map(
+            (e) => `
+          <div class="resume-sidebar-entry">
+            <h3 class="resume-sidebar-entry-title">${escapeHtml(e.institution || e.degree)}</h3>
+            ${hasText(e.degree) && hasText(e.institution) ? `<p class="resume-sidebar-entry-subtitle">${escapeHtml(e.degree)}</p>` : ""}
+          </div>
+        `
+          )
+          .join("")}
+      </section>
+    `;
+  }
+
+  function renderExperienceSidebarHtml(experience = []) {
+    const entries = experience.filter((e) => entryHasContent(e, ["company", "jobTitle"]));
+    if (!entries.length) return "";
+
+    return `
+      <section class="resume-section">
+        <h2 class="resume-section-title">Work Experience</h2>
+        ${entries
+          .map(
+            (e) => `
+          <div class="resume-sidebar-entry">
+            <h3 class="resume-sidebar-entry-title">${escapeHtml(e.jobTitle || e.company)}</h3>
+            ${hasText(e.company) && hasText(e.jobTitle) ? `<p class="resume-sidebar-entry-subtitle">${escapeHtml(e.company)}</p>` : ""}
+          </div>
+        `
+          )
+          .join("")}
+      </section>
+    `;
+  }
+
+  function renderProjectsSidebarHtml(projects = []) {
+    const entries = projects.filter((e) => entryHasContent(e, ["name"]));
+    if (!entries.length) return "";
+
+    return `
+      <section class="resume-section">
+        <h2 class="resume-section-title">Projects</h2>
+        ${entries
+          .map(
+            (e) => `
+          <div class="resume-sidebar-entry">
+            <h3 class="resume-sidebar-entry-title">${escapeHtml(e.name)}</h3>
+            ${hasText(e.technologies) ? `<p class="resume-sidebar-entry-subtitle">${escapeHtml(e.technologies)}</p>` : ""}
+          </div>
+        `
+          )
+          .join("")}
+      </section>
+    `;
+  }
+
+  function renderSkillsSidebarHtml(skills) {
+    const skillList = normalizeSkills(skills);
+    if (!skillList.length) return "";
+
+    return `
+      <section class="resume-section">
+        <h2 class="resume-section-title">Skills</h2>
+        <p class="resume-sidebar-entry-subtitle" style="color: #ffffff;">${skillList.map((s) => escapeHtml(s)).join(", ")}</p>
+      </section>
+    `;
+  }
 
   function renderCertificationsSidebarHtml(certifications = []) {
     const entries = certifications.filter((entry) =>
@@ -305,30 +474,52 @@
           "achievements",
           "languages",
         ],
+        sectionColumns = {},
       } = state;
 
-      const sectionMap = {
+      const defaultCols = {
+        summary: "main",
+        education: "main",
+        experience: "main",
+        projects: "main",
+        skills: "main",
+        certifications: "sidebar",
+        languages: "sidebar",
+        achievements: "sidebar",
+      };
+
+      const mainMap = {
         summary: renderSummaryHtml(personalInfo.summary),
         education: renderEducationHtml(education),
         experience: renderExperienceHtml(experience),
         projects: renderProjectsHtml(projects),
         skills: renderSkillsHtml(skills),
+        certifications: renderCertificationsMainHtml(certifications),
+        languages: renderLanguagesMainHtml(languages),
+        achievements: renderAchievementsMainHtml(achievements),
+      };
+
+      const sidebarMap = {
+        summary: renderSummarySidebarHtml(personalInfo.summary),
+        education: renderEducationSidebarHtml(education),
+        experience: renderExperienceSidebarHtml(experience),
+        projects: renderProjectsSidebarHtml(projects),
+        skills: renderSkillsSidebarHtml(skills),
         certifications: renderCertificationsSidebarHtml(certifications),
         languages: renderLanguagesSidebarHtml(languages),
         achievements: renderAchievementsSidebarHtml(achievements),
       };
 
-      const mainKeys = ["summary", "education", "experience", "projects", "skills"];
-      const sidebarKeys = ["certifications", "languages", "achievements"];
-
       const mainSections = [
         renderHeaderHtml(personalInfo),
-        ...sectionOrder.filter((k) => mainKeys.includes(k)).map((k) => sectionMap[k] || ""),
+        ...sectionOrder
+          .filter((k) => (sectionColumns[k] || defaultCols[k] || "main") === "main")
+          .map((k) => mainMap[k] || ""),
       ].filter(Boolean);
 
       const sidebarSections = sectionOrder
-        .filter((k) => sidebarKeys.includes(k))
-        .map((k) => sectionMap[k] || "")
+        .filter((k) => (sectionColumns[k] || defaultCols[k]) === "sidebar")
+        .map((k) => sidebarMap[k] || "")
         .filter(Boolean);
 
       return `

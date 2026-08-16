@@ -96,6 +96,16 @@ const resumeState = {
     "achievements",
     "languages",
   ],
+  sectionColumns: {
+    summary: "main",
+    education: "main",
+    experience: "main",
+    projects: "main",
+    skills: "sidebar",
+    certifications: "sidebar",
+    achievements: "sidebar",
+    languages: "sidebar",
+  },
   template: "default",
 };
 

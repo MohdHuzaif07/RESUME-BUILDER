@@ -199,7 +199,42 @@ body {
 .section-reorder-btns {
   display: inline-flex;
   align-items: center;
-  gap: 2px;
+  gap: 4px;
+}
+
+.column-select {
+  display: inline-block !important;
+  width: auto !important;
+  min-width: 6.25rem !important;
+  height: 1.625rem !important;
+  padding: 0.15rem 1.6rem 0.15rem 0.6rem !important;
+  font-family: inherit !important;
+  font-size: 0.75rem !important;
+  font-weight: 500 !important;
+  line-height: 1.2 !important;
+  color: var(--color-text) !important;
+  background-color: var(--color-surface) !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 12 12'%3E%3Cpath fill='%235c6578' d='M6 8L1 3h10z'/%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important;
+  background-position: right 0.45rem center !important;
+  border: 1px solid var(--color-border) !important;
+  border-radius: var(--radius-sm) !important;
+  cursor: pointer !important;
+  margin-right: 4px !important;
+  box-sizing: border-box !important;
+  transition: border-color var(--transition), color var(--transition), background-color var(--transition) !important;
+}
+
+.column-select:hover {
+  border-color: var(--color-primary) !important;
+  color: var(--color-primary) !important;
+  background-color: #eff6ff !important;
+}
+
+.column-select:focus {
+  outline: none !important;
+  border-color: var(--color-border-focus) !important;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15) !important;
 }
 
 .btn-section-move {
