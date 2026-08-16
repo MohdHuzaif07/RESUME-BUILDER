@@ -6,6 +6,9 @@
   <title>Resume Builder</title>
   <link rel="stylesheet" href="css/styles.css">
   <link rel="stylesheet" href="css/resume.css">
+  <link rel="stylesheet" href="css/templates/classic.css">
+  <link rel="stylesheet" href="css/templates/minimal.css">
+  <link rel="stylesheet" href="css/templates/executive.css">
 </head>
 <body>
   <header class="app-header">
@@ -157,8 +160,17 @@
         </fieldset>
 
         <!-- Professional Summary -->
-        <fieldset class="form-section" id="summary-section">
-          <legend>Professional Summary</legend>
+        <fieldset class="form-section form-section-reorderable" id="summary-section" data-section="summary" draggable="true">
+          <legend class="reorder-legend">
+            <span class="reorder-drag-handle" title="Drag to reorder section" aria-label="Drag to reorder section">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M8 6a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm0 6a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm0 6a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm12-12a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm0 6a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm0 6a2 2 0 1 1-4 0 2 2 0 0 1 4 0z"/></svg>
+            </span>
+            <span class="section-title-text">Professional Summary</span>
+            <div class="section-reorder-btns">
+              <button type="button" class="btn-section-move btn-move-up" title="Move section up" aria-label="Move section up">▲</button>
+              <button type="button" class="btn-section-move btn-move-down" title="Move section down" aria-label="Move section down">▼</button>
+            </div>
+          </legend>
 
           <div class="form-group">
             <label for="summary">Summary</label>
@@ -174,8 +186,17 @@
         </fieldset>
 
         <!-- Education -->
-        <fieldset class="form-section" id="education-section">
-          <legend>Education</legend>
+        <fieldset class="form-section form-section-reorderable" id="education-section" data-section="education" draggable="true">
+          <legend class="reorder-legend">
+            <span class="reorder-drag-handle" title="Drag to reorder section" aria-label="Drag to reorder section">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M8 6a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm0 6a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm0 6a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm12-12a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm0 6a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm0 6a2 2 0 1 1-4 0 2 2 0 0 1 4 0z"/></svg>
+            </span>
+            <span class="section-title-text">Education</span>
+            <div class="section-reorder-btns">
+              <button type="button" class="btn-section-move btn-move-up" title="Move section up" aria-label="Move section up">▲</button>
+              <button type="button" class="btn-section-move btn-move-down" title="Move section down" aria-label="Move section down">▼</button>
+            </div>
+          </legend>
 
           <div id="education-list" class="dynamic-list" aria-live="polite"></div>
 
@@ -185,8 +206,17 @@
         </fieldset>
 
         <!-- Work Experience -->
-        <fieldset class="form-section" id="experience-section">
-          <legend>Work Experience</legend>
+        <fieldset class="form-section form-section-reorderable" id="experience-section" data-section="experience" draggable="true">
+          <legend class="reorder-legend">
+            <span class="reorder-drag-handle" title="Drag to reorder section" aria-label="Drag to reorder section">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M8 6a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm0 6a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm0 6a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm12-12a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm0 6a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm0 6a2 2 0 1 1-4 0 2 2 0 0 1 4 0z"/></svg>
+            </span>
+            <span class="section-title-text">Work Experience</span>
+            <div class="section-reorder-btns">
+              <button type="button" class="btn-section-move btn-move-up" title="Move section up" aria-label="Move section up">▲</button>
+              <button type="button" class="btn-section-move btn-move-down" title="Move section down" aria-label="Move section down">▼</button>
+            </div>
+          </legend>
 
           <div id="experience-list" class="dynamic-list" aria-live="polite"></div>
 
@@ -196,8 +226,17 @@
         </fieldset>
 
         <!-- Projects -->
-        <fieldset class="form-section" id="projects-section">
-          <legend>Projects</legend>
+        <fieldset class="form-section form-section-reorderable" id="projects-section" data-section="projects" draggable="true">
+          <legend class="reorder-legend">
+            <span class="reorder-drag-handle" title="Drag to reorder section" aria-label="Drag to reorder section">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M8 6a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm0 6a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm0 6a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm12-12a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm0 6a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm0 6a2 2 0 1 1-4 0 2 2 0 0 1 4 0z"/></svg>
+            </span>
+            <span class="section-title-text">Projects</span>
+            <div class="section-reorder-btns">
+              <button type="button" class="btn-section-move btn-move-up" title="Move section up" aria-label="Move section up">▲</button>
+              <button type="button" class="btn-section-move btn-move-down" title="Move section down" aria-label="Move section down">▼</button>
+            </div>
+          </legend>
 
           <div id="projects-list" class="dynamic-list" aria-live="polite"></div>
 
@@ -207,8 +246,17 @@
         </fieldset>
 
         <!-- Skills -->
-        <fieldset class="form-section" id="skills-section">
-          <legend>Technical Skills</legend>
+        <fieldset class="form-section form-section-reorderable" id="skills-section" data-section="skills" draggable="true">
+          <legend class="reorder-legend">
+            <span class="reorder-drag-handle" title="Drag to reorder section" aria-label="Drag to reorder section">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M8 6a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm0 6a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm0 6a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm12-12a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm0 6a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm0 6a2 2 0 1 1-4 0 2 2 0 0 1 4 0z"/></svg>
+            </span>
+            <span class="section-title-text">Technical Skills</span>
+            <div class="section-reorder-btns">
+              <button type="button" class="btn-section-move btn-move-up" title="Move section up" aria-label="Move section up">▲</button>
+              <button type="button" class="btn-section-move btn-move-down" title="Move section down" aria-label="Move section down">▼</button>
+            </div>
+          </legend>
 
           <div class="form-group">
             <label for="skills">Skills</label>
@@ -224,8 +272,17 @@
         </fieldset>
 
         <!-- Certifications -->
-        <fieldset class="form-section" id="certifications-section">
-          <legend>Certifications</legend>
+        <fieldset class="form-section form-section-reorderable" id="certifications-section" data-section="certifications" draggable="true">
+          <legend class="reorder-legend">
+            <span class="reorder-drag-handle" title="Drag to reorder section" aria-label="Drag to reorder section">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M8 6a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm0 6a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm0 6a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm12-12a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm0 6a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm0 6a2 2 0 1 1-4 0 2 2 0 0 1 4 0z"/></svg>
+            </span>
+            <span class="section-title-text">Certifications</span>
+            <div class="section-reorder-btns">
+              <button type="button" class="btn-section-move btn-move-up" title="Move section up" aria-label="Move section up">▲</button>
+              <button type="button" class="btn-section-move btn-move-down" title="Move section down" aria-label="Move section down">▼</button>
+            </div>
+          </legend>
 
           <div id="certifications-list" class="dynamic-list" aria-live="polite"></div>
 
@@ -235,8 +292,17 @@
         </fieldset>
 
         <!-- Achievements -->
-        <fieldset class="form-section" id="achievements-section">
-          <legend>Achievements</legend>
+        <fieldset class="form-section form-section-reorderable" id="achievements-section" data-section="achievements" draggable="true">
+          <legend class="reorder-legend">
+            <span class="reorder-drag-handle" title="Drag to reorder section" aria-label="Drag to reorder section">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M8 6a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm0 6a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm0 6a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm12-12a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm0 6a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm0 6a2 2 0 1 1-4 0 2 2 0 0 1 4 0z"/></svg>
+            </span>
+            <span class="section-title-text">Achievements</span>
+            <div class="section-reorder-btns">
+              <button type="button" class="btn-section-move btn-move-up" title="Move section up" aria-label="Move section up">▲</button>
+              <button type="button" class="btn-section-move btn-move-down" title="Move section down" aria-label="Move section down">▼</button>
+            </div>
+          </legend>
 
           <div id="achievements-list" class="dynamic-list" aria-live="polite"></div>
 
@@ -246,8 +312,17 @@
         </fieldset>
 
         <!-- Languages -->
-        <fieldset class="form-section" id="languages-section">
-          <legend>Languages</legend>
+        <fieldset class="form-section form-section-reorderable" id="languages-section" data-section="languages" draggable="true">
+          <legend class="reorder-legend">
+            <span class="reorder-drag-handle" title="Drag to reorder section" aria-label="Drag to reorder section">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M8 6a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm0 6a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm0 6a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm12-12a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm0 6a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm0 6a2 2 0 1 1-4 0 2 2 0 0 1 4 0z"/></svg>
+            </span>
+            <span class="section-title-text">Languages</span>
+            <div class="section-reorder-btns">
+              <button type="button" class="btn-section-move btn-move-up" title="Move section up" aria-label="Move section up">▲</button>
+              <button type="button" class="btn-section-move btn-move-down" title="Move section down" aria-label="Move section down">▼</button>
+            </div>
+          </legend>
 
           <div id="languages-list" class="dynamic-list" aria-live="polite"></div>
 
@@ -263,19 +338,20 @@
           <div class="form-group">
             <label for="template">Template</label>
             <select id="template" name="template">
-              <option value="default" selected>Default</option>
-              <option value="modern" disabled>Modern (coming soon)</option>
-              <option value="classic" disabled>Classic (coming soon)</option>
+              <option value="classic" selected>Default</option>
+              <option value="executive">Dark Top Banner</option>
+              <option value="minimal">Clean Minimalist</option>
             </select>
           </div>
         </fieldset>
       </form>
     </section>
 
+
     <section class="preview-panel" aria-label="Resume preview">
       <div class="preview-panel-header">
         <h2>Preview</h2>
-        <button type="button" id="download-pdf" class="btn btn-primary" aria-label="Download resume as PDF">
+        <button type="button" id="download-pdf-btn" class="btn btn-primary" aria-label="Download resume as PDF">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="margin-right: 4px;">
             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
             <polyline points="7 10 12 15 17 10"></polyline>
@@ -507,10 +583,20 @@
     </article>
   </template>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.2/html2pdf.bundle.min.js" integrity="sha512-MpDFIChbcXl2QgipQrt1VkPREOQ9bBBskThiqgPH2PGUE/1sBsruHHkSfmhHNbIjMmEgYYm0MaVBMHGWOsqtQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <!-- External PDF Generation Libraries -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+  <!-- Application Modules -->
   <script src="js/state.js"></script>
   <script src="js/validation.js"></script>
+  <script src="js/reorder.js"></script>
   <script src="js/preview.js"></script>
+  <script src="js/pdf.js"></script>
+  <script src="js/templates/classic.js"></script>
+  <script src="js/templates/minimal.js"></script>
+  <script src="js/templates/executive.js"></script>
   <script src="js/main.js"></script>
 </body>
 </html>
+

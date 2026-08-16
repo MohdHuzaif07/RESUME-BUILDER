@@ -142,6 +142,118 @@ body {
   letter-spacing: 0.01em;
 }
 
+/* Section Reordering Controls */
+
+.form-section-reorderable {
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+
+.form-section-reorderable.dragging {
+  opacity: 0.5;
+  border-style: dashed;
+  border-color: var(--color-primary);
+  background-color: #eff6ff;
+}
+
+.form-section-reorderable.drag-over {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px var(--color-primary);
+}
+
+.reorder-legend {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  width: calc(100% - 0.5rem);
+  padding: 0 var(--spacing-xs);
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-text);
+  user-select: none;
+}
+
+.reorder-drag-handle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.15rem 0.25rem;
+  color: #8a94a6;
+  cursor: grab;
+  border-radius: var(--radius-sm);
+  transition: color var(--transition), background-color var(--transition);
+}
+
+.reorder-drag-handle:hover {
+  color: var(--color-primary);
+  background-color: #e8edf2;
+}
+
+.reorder-drag-handle:active {
+  cursor: grabbing;
+}
+
+.section-title-text {
+  flex: 1;
+}
+
+.section-reorder-btns {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.column-select {
+  display: inline-block !important;
+  width: auto !important;
+  min-width: 6.25rem !important;
+  height: 1.625rem !important;
+  padding: 0.15rem 1.6rem 0.15rem 0.6rem !important;
+  font-family: inherit !important;
+  font-size: 0.75rem !important;
+  font-weight: 500 !important;
+  line-height: 1.2 !important;
+  color: var(--color-text) !important;
+  background-color: var(--color-surface) !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 12 12'%3E%3Cpath fill='%235c6578' d='M6 8L1 3h10z'/%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important;
+  background-position: right 0.45rem center !important;
+  border: 1px solid var(--color-border) !important;
+  border-radius: var(--radius-sm) !important;
+  cursor: pointer !important;
+  margin-right: 4px !important;
+  box-sizing: border-box !important;
+  transition: border-color var(--transition), color var(--transition), background-color var(--transition) !important;
+}
+
+.btn-section-move {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  padding: 0;
+  font-size: 0.7rem;
+  color: var(--color-text-subtle);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: color var(--transition), background-color var(--transition), border-color var(--transition);
+}
+
+.btn-section-move:hover:not(:disabled) {
+  color: var(--color-primary);
+  border-color: var(--color-primary);
+  background-color: #eff6ff;
+}
+
+.btn-section-move:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  border-color: var(--color-border);
+  color: var(--color-text-subtle);
+}
+
 /* Form groups */
 
 .form-group {
@@ -384,6 +496,25 @@ textarea.invalid:focus {
   border-color: var(--color-primary-hover);
 }
 
+.btn-loading {
+  opacity: 0.8;
+  cursor: wait;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.spinner {
+  animation: spin 0.8s linear infinite;
+}
+
+
 .btn-secondary {
   color: var(--color-text);
   background-color: var(--color-surface);
@@ -582,6 +713,7 @@ textarea.invalid:focus {
 
   #resume-preview {
     padding: 0 !important;
+    margin: 0 !important;
     border: none !important;
     box-shadow: none !important;
   }
@@ -590,9 +722,41 @@ textarea.invalid:focus {
     display: none !important;
   }
 
+  /* Table-based print margins to support page breaks without browser header/footers */
+  .print-table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+    border: none !important;
+    background: transparent !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .print-table tr,
+  .print-table td {
+    border: none !important;
+    background: transparent !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .print-header-space {
+    height: 14mm !important; /* 14mm + 1mm page margin = 15mm top margin */
+  }
+
+  .print-footer-space {
+    height: 14mm !important; /* 14mm + 1mm page margin = 15mm bottom margin */
+  }
+
+  .print-content-cell {
+    padding-left: 19mm !important;  /* 19mm + 1mm page margin = 20mm left margin */
+    padding-right: 19mm !important; /* 19mm + 1mm page margin = 20mm right margin */
+    vertical-align: top !important;
+  }
+
   @page {
     size: A4 portrait;
-    margin: 12mm 15mm;
+    margin: 1mm !important; /* Non-zero to preserve hyperlinks, but too small for browser headers/footers */
   }
 }
 

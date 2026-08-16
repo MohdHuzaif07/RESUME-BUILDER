@@ -1,0 +1,212 @@
+/* Executive / Top Dark Banner Resume Template (Reference Image 3) */
+/* SINGLE CONTINUOUS FULL-WIDTH LAYOUT */
+
+.resume--executive {
+  font-family: Georgia, "Times New Roman", Times, serif;
+  font-size: 0.84rem;
+  line-height: 1.45;
+  color: #1e1b18;
+  background-color: #ffffff;
+  padding: 0;
+  width: 100%;
+  max-width: 794px;
+  min-height: 1123px;
+  height: auto;
+  margin: 0 auto;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+  box-sizing: border-box;
+}
+
+.resume--executive .resume-banner {
+  background-color: #333230;
+  color: #ffffff;
+  padding: 1.5rem 2.25rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.resume--executive .resume-banner-text {
+  flex: 1;
+}
+
+.resume--executive .resume-name {
+  margin: 0 0 0.2rem;
+  font-size: 1.9rem;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: -0.01em;
+  line-height: 1.15;
+}
+
+.resume--executive .resume-title {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 400;
+  color: #dcdad6;
+  font-style: italic;
+}
+
+.resume--executive .resume-photo {
+  flex-shrink: 0;
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 2px solid #ffffff;
+  margin: 0;
+}
+
+.resume--executive .resume-contact-bar {
+  background-color: #f4f3f0;
+  padding: 0.6rem 2.25rem;
+  border-bottom: 1px solid #e2e0dc;
+}
+
+.resume--executive .resume-contact,
+.resume--executive .resume-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.78rem;
+  color: #444340;
+}
+
+.resume--executive .resume-links {
+  margin-top: 0.2rem;
+}
+
+.resume--executive a {
+  color: inherit;
+  text-decoration: none !important;
+  border-bottom: 1px dotted currentColor;
+}
+
+.resume--executive a:hover {
+  border-bottom-style: solid;
+}
+
+.resume--executive .resume-body-content {
+  padding: 1.75rem 2.25rem;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.resume--executive .resume-section {
+  margin-bottom: 1rem;
+}
+
+.resume--executive .resume-section:last-child {
+  margin-bottom: 0;
+}
+
+.resume--executive .resume-section-title {
+  margin: 0 0 0.4rem;
+  padding-bottom: 0.15rem;
+  font-size: 0.88rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #111111;
+  border-bottom: 1px solid #111111;
+  letter-spacing: 0.04em;
+  page-break-after: avoid;
+  break-after: avoid;
+}
+
+.resume--executive .resume-summary {
+  margin: 0;
+  font-size: 0.78rem;
+  color: #2b2926;
+  text-align: justify;
+}
+
+.resume--executive .resume-entry {
+  margin-bottom: 0.65rem;
+}
+
+.resume--executive .resume-entry:last-child {
+  margin-bottom: 0;
+}
+
+.resume--executive .resume-entry-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+
+.resume--executive .resume-entry-title {
+  margin: 0;
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: #111111;
+}
+
+.resume--executive .resume-entry-title a {
+  color: #111111;
+  text-decoration: underline;
+}
+
+.resume--executive .resume-entry-date {
+  font-size: 0.75rem;
+  font-style: italic;
+  color: #555451;
+  white-space: nowrap;
+}
+
+.resume--executive .resume-entry-subtitle {
+  margin: 0.05rem 0 0.15rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #333230;
+}
+
+.resume--executive .resume-entry-meta {
+  margin: 0 0 0.15rem;
+  font-size: 0.75rem;
+  color: #666461;
+}
+
+.resume--executive .resume-entry-description {
+  margin: 0.15rem 0 0;
+  font-size: 0.76rem;
+  color: #22211f;
+}
+
+.resume--executive .resume-entry-description ul,
+.resume--executive .resume-summary ul {
+  margin: 0.15rem 0 0;
+  padding-left: 1.1rem;
+}
+
+.resume--executive .resume-language {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 0.3rem;
+  font-size: 0.78rem;
+}
+
+.resume--executive .resume-language-name {
+  font-weight: 600;
+  color: #111111;
+}
+
+.resume--executive .resume-language-level {
+  font-style: italic;
+  color: #666461;
+}
+
+.resume--executive .resume-list {
+  margin: 0;
+  padding-left: 1.1rem;
+}
+
+.resume--executive .resume-list li {
+  margin-bottom: 0.3rem;
+  font-size: 0.76rem;
+}

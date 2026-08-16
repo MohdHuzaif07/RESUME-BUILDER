@@ -221,7 +221,10 @@ function loadStateFromStorage() {
       if (Array.isArray(parsed.certifications)) resumeState.certifications = parsed.certifications;
       if (Array.isArray(parsed.achievements)) resumeState.achievements = parsed.achievements;
       if (Array.isArray(parsed.languages)) resumeState.languages = parsed.languages;
-      if (typeof parsed.template === "string") resumeState.template = parsed.template;
+      if (typeof parsed.template === "string") {
+        const validTemplates = ["classic", "executive", "minimal"];
+        resumeState.template = validTemplates.includes(parsed.template) ? parsed.template : "classic";
+      }
       return true;
     }
   } catch (err) {
@@ -547,77 +550,11 @@ function handleFormClick(event) {
 /* ─── PDF Download ─── */
 
 function handleDownloadPdf() {
-  const previewEl = document.getElementById("resume-preview");
-  const downloadBtn = document.getElementById("download-pdf");
-  if (!previewEl) return;
-
-  // Derive a clean filename from the user's full name
-  const fullName = resumeState.personalInfo?.fullName?.trim();
-  const fileName = fullName
-    ? `${fullName.replace(/[^a-zA-Z0-9_\s-]/g, "").replace(/\s+/g, "_")}_Resume.pdf`
-    : "Resume.pdf";
-
-  // Show loading state on button (preserve the SVG icon)
-  let originalBtnHtml = "";
-  if (downloadBtn) {
-    originalBtnHtml = downloadBtn.innerHTML;
-    downloadBtn.disabled = true;
-    downloadBtn.classList.add("btn-loading");
-    downloadBtn.innerHTML = "Generating…";
+  if (typeof downloadResumePdf === "function") {
+    downloadResumePdf();
+  } else {
+    alert("PDF generator component is still loading.");
   }
-
-  // Clone the preview element so we don't disrupt the live preview
-  const clone = previewEl.cloneNode(true);
-  clone.style.width = "210mm"; // A4 width for consistent rendering
-  clone.style.padding = "2rem";
-  clone.style.background = "#fff";
-  clone.style.position = "absolute";
-  clone.style.left = "-9999px";
-  clone.style.top = "0";
-  document.body.appendChild(clone);
-
-  const options = {
-    margin: [10, 15, 10, 15], // mm: top, left, bottom, right
-    filename: fileName,
-    image: { type: "jpeg", quality: 0.98 },
-    html2canvas: {
-      scale: 2,
-      useCORS: true,
-      letterRendering: true,
-      logging: false,
-    },
-    jsPDF: {
-      unit: "mm",
-      format: "a4",
-      orientation: "portrait",
-    },
-    enableLinks: true,
-    pagebreak: { mode: ["avoid-all", "css", "legacy"] },
-  };
-
-  html2pdf()
-    .set(options)
-    .from(clone)
-    .save()
-    .then(() => {
-      // Clean up
-      document.body.removeChild(clone);
-      if (downloadBtn) {
-        downloadBtn.disabled = false;
-        downloadBtn.classList.remove("btn-loading");
-        downloadBtn.innerHTML = originalBtnHtml;
-      }
-    })
-    .catch((err) => {
-      console.error("PDF generation failed:", err);
-      document.body.removeChild(clone);
-      if (downloadBtn) {
-        downloadBtn.disabled = false;
-        downloadBtn.classList.remove("btn-loading");
-        downloadBtn.innerHTML = originalBtnHtml;
-      }
-      showStorageWarning("PDF generation failed. Please try again.");
-    });
 }
 
 /* ─── Initialization ─── */
@@ -637,7 +574,6 @@ function initValidation() {
   document.getElementById("linkedin")?.addEventListener("blur", validateLinkedIn);
   document.getElementById("github")?.addEventListener("blur", validateGitHub);
   document.getElementById("portfolio")?.addEventListener("blur", validatePortfolio);
-  // V1: Wire up phone validation (was defined in validation.js but never used)
   document.getElementById("phone")?.addEventListener("blur", validatePhone);
 }
 
@@ -655,15 +591,18 @@ function initFormListeners() {
   const form = document.getElementById("resume-form");
   if (!form) return;
 
-  // P2 Fix: Both listeners are kept, but handleFormInput now intelligently
-  // skips the 'change' event for text-like inputs to avoid double-firing.
+  // Prevent default form submission (e.g. Enter keypress)
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+  });
+
   form.addEventListener("input", handleFormInput);
   form.addEventListener("change", handleFormInput);
   form.addEventListener("click", handleFormClick);
 }
 
 function initDownloadPdf() {
-  const downloadBtn = document.getElementById("download-pdf");
+  const downloadBtn = document.getElementById("download-pdf-btn") || document.getElementById("download-pdf");
   if (downloadBtn) {
     downloadBtn.addEventListener("click", handleDownloadPdf);
   }
@@ -686,3 +625,4 @@ function initApp() {
 }
 
 document.addEventListener("DOMContentLoaded", initApp);
+
