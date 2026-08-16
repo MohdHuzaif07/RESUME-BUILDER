@@ -302,7 +302,7 @@
   }
 
   window.ResumeTemplates["classic"] = {
-    name: "Master LaTeX (Single Column — Image 5)",
+    name: "Default",
     render: function (state) {
       const {
         personalInfo = {},

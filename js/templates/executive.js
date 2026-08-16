@@ -1,5 +1,6 @@
 /**
- * Executive Resume Template Renderer (Top Dark Banner — Reference Image 3)
+ * Executive Resume Template Renderer (Dark Top Banner)
+ * Single continuous full-width layout
  */
 
 (function () {
@@ -97,21 +98,15 @@
 
     const items = entries
       .map(
-        (entry) => `
-          <div class="resume-language">
-            <span class="resume-language-name">${escapeHtml(entry.language)}</span>
-            ${hasText(entry.proficiency)
-              ? `<span class="resume-language-level">${escapeHtml(formatProficiency(entry.proficiency))}</span>`
-              : ""}
-          </div>
-        `
+        (entry) =>
+          `<strong>${escapeHtml(entry.language)}</strong>${hasText(entry.proficiency) ? ` (${escapeHtml(formatProficiency(entry.proficiency))})` : ""}`
       )
-      .join("");
+      .join(" • ");
 
     return `
       <section class="resume-section">
         <h2 class="resume-section-title">Languages</h2>
-        ${items}
+        <p class="resume-summary">${items}</p>
       </section>
     `;
   }
@@ -123,7 +118,7 @@
     return `
       <section class="resume-section">
         <h2 class="resume-section-title">Skills</h2>
-        <p class="resume-summary">${skillList.map(s => escapeHtml(s)).join(", ")}</p>
+        <p class="resume-summary">${skillList.map((s) => escapeHtml(s)).join(", ")}</p>
       </section>
     `;
   }
@@ -294,7 +289,7 @@
   }
 
   window.ResumeTemplates["executive"] = {
-    name: "Dark Top Banner (Image 3)",
+    name: "Dark Top Banner",
     render: function (state) {
       const {
         personalInfo = {},
@@ -328,29 +323,13 @@
         achievements: renderAchievementsHtml(achievements),
       };
 
-      const leftKeys = ["certifications", "languages", "skills"];
-      const rightKeys = ["summary", "education", "experience", "projects", "achievements"];
-
-      const leftSections = sectionOrder
-        .filter((k) => leftKeys.includes(k))
-        .map((k) => sectionMap[k] || "")
-        .filter(Boolean);
-
-      const rightSections = sectionOrder
-        .filter((k) => rightKeys.includes(k))
-        .map((k) => sectionMap[k] || "")
-        .filter(Boolean);
+      const sections = sectionOrder.map((key) => sectionMap[key] || "").filter(Boolean);
 
       return `
         ${renderBannerHtml(personalInfo)}
         ${renderContactBarHtml(personalInfo)}
-        <div class="resume-body-grid">
-          <div class="resume-left-col">
-            ${leftSections.join("")}
-          </div>
-          <div class="resume-right-col">
-            ${rightSections.join("")}
-          </div>
+        <div class="resume-body-content">
+          ${sections.join("")}
         </div>
       `;
     },

@@ -2,18 +2,18 @@
  * Direct Client-Side High-Speed PDF Exporter with Proper Multi-Page Alignment & Item-Level Page Breaks
  */
 
-function getPageBreaks(previewEl, canvas, canvasPageHeight) {
+function getPageBreaks(previewEl, canvas, page1CanvasHeight, page2CanvasHeight) {
   const containerRect = previewEl.getBoundingClientRect();
   if (!containerRect.height) return [0, canvas.height];
 
   // Scale ratio from DOM coordinates to Canvas pixel coordinates
   const scale = canvas.height / containerRect.height;
 
-  // Find all individual breakable item elements:
-  // (.resume-entry, .resume-sidebar-entry, .resume-language, .resume-section-title, .resume-section, p, li)
+  // Find atomic leaf elements (individual titles, subtitles, list items, paragraphs, headings).
+  // DO NOT include entry wrapper containers like .resume-entry or .resume-section!
   const elements = Array.from(
     previewEl.querySelectorAll(
-      ".resume-entry, .resume-sidebar-entry, .resume-language, .resume-section-title, .resume-section, p, li"
+      ".resume-section-title, .resume-entry-title, .resume-entry-subtitle, .resume-entry-description li, .resume-entry-description p, .resume-sidebar-entry, .resume-language, .resume-list li, .resume-summary"
     )
   );
 
@@ -22,7 +22,8 @@ function getPageBreaks(previewEl, canvas, canvasPageHeight) {
       const rect = el.getBoundingClientRect();
       const top = (rect.top - containerRect.top) * scale;
       const bottom = (rect.bottom - containerRect.top) * scale;
-      return { top, bottom, height: bottom - top };
+      const isTitle = el.classList.contains("resume-section-title");
+      return { top, bottom, height: bottom - top, isTitle, el };
     })
     .filter((b) => b.height > 0)
     .sort((a, b) => a.top - b.top);
@@ -30,19 +31,35 @@ function getPageBreaks(previewEl, canvas, canvasPageHeight) {
   const breaks = [0];
   let currentY = 0;
   const totalCanvasHeight = canvas.height;
+  let pageIdx = 0;
 
-  while (currentY + canvasPageHeight < totalCanvasHeight - 15) {
-    const idealY = currentY + canvasPageHeight;
+  while (currentY + (pageIdx === 0 ? page1CanvasHeight : page2CanvasHeight) < totalCanvasHeight - 15) {
+    const targetHeight = pageIdx === 0 ? page1CanvasHeight : page2CanvasHeight;
+    const idealY = currentY + targetHeight;
     let actualY = idealY;
 
     // Find the specific item element that crosses idealY
-    for (const b of blocks) {
+    for (let i = 0; i < blocks.length; i++) {
+      const b = blocks[i];
       if (b.top < idealY && b.bottom > idealY) {
-        // Break 4px above this specific item if it started after currentY
-        if (b.top > currentY + 25) {
+        if (b.top > currentY + 30) {
           actualY = b.top - 4;
         }
         break;
+      }
+    }
+
+    // Orphan section title check:
+    // If actualY leaves a section title alone near the bottom (no item fits after title), break BEFORE section title!
+    for (let i = 0; i < blocks.length; i++) {
+      const b = blocks[i];
+      if (b.isTitle) {
+        const nextItem = blocks[i + 1];
+        if (nextItem && nextItem.top >= actualY && b.top < actualY) {
+          if (b.top > currentY + 30 && actualY - b.top < 60) {
+            actualY = b.top - 4;
+          }
+        }
       }
     }
 
@@ -52,13 +69,18 @@ function getPageBreaks(previewEl, canvas, canvasPageHeight) {
 
     breaks.push(actualY);
     currentY = actualY;
+    pageIdx++;
   }
 
   breaks.push(totalCanvasHeight);
   return breaks;
 }
 
+let isGeneratingPdf = false;
+
 async function downloadResumePdf() {
+  if (isGeneratingPdf) return;
+
   const previewEl = document.getElementById("resume-preview");
   const downloadBtn = document.getElementById("download-pdf-btn");
 
@@ -73,6 +95,8 @@ async function downloadResumePdf() {
     alert("PDF library is loading or failed to load. Please try again.");
     return;
   }
+
+  isGeneratingPdf = true;
 
   // Set loading state on button
   let originalBtnText = "";
@@ -104,8 +128,15 @@ async function downloadResumePdf() {
     const pdfWidth = 595.28;
     const pdfHeight = 841.89;
 
-    const containerWidth = previewEl.offsetWidth || canvas.width / 3;
-    const ratio = pdfWidth / containerWidth;
+    const pageTopMarginPt = 28;    // 28pt top margin for Page 2+
+    const pageBottomMarginPt = 28; // 28pt bottom margin for all pages
+
+    // Printable canvas height available on Page 1 vs Page 2+
+    const page1MaxPt = pdfHeight - pageBottomMarginPt;
+    const page2MaxPt = pdfHeight - pageTopMarginPt - pageBottomMarginPt;
+
+    const page1CanvasHeight = (page1MaxPt / pdfWidth) * canvas.width;
+    const page2CanvasHeight = (page2MaxPt / pdfWidth) * canvas.width;
 
     const pdf = new jsPDF({
       orientation: "portrait",
@@ -114,11 +145,8 @@ async function downloadResumePdf() {
       compress: true,
     });
 
-    const canvasPageHeight = (pdfHeight / pdfWidth) * canvas.width;
-    const breaks = getPageBreaks(previewEl, canvas, canvasPageHeight);
+    const breaks = getPageBreaks(previewEl, canvas, page1CanvasHeight, page2CanvasHeight);
     const pageCount = breaks.length - 1;
-
-    const pageTopMarginPt = 24; // Elegant 24pt top margin for Page 2+
 
     for (let i = 0; i < pageCount; i++) {
       if (i > 0) pdf.addPage();
@@ -180,29 +208,27 @@ async function downloadResumePdf() {
         }
       }
 
-      const pageTopCanvas = relTopCanvas - breaks[pageIdx];
-      const topOffsetPt = pageIdx === 0 ? 0 : pageTopMarginPt;
-      const pdfX = relLeft * ratio;
-      const pdfY = (pageTopCanvas / scale) * ratio + topOffsetPt;
-      const pdfW = rect.width * ratio;
-      const pdfH = rect.height * ratio;
+      const sliceStartY = breaks[pageIdx];
+      const offsetInSliceCanvas = relTopCanvas - sliceStartY;
+      const offsetInSlicePt = (offsetInSliceCanvas / canvas.width) * pdfWidth;
 
-      if (pageIdx < pageCount) {
-        pdf.setPage(pageIdx + 1);
-        pdf.link(pdfX, pdfY, pdfW, pdfH, { url: href });
-      }
+      const topMarginForThisPage = pageIdx === 0 ? 0 : pageTopMarginPt;
+      const pdfY = topMarginForThisPage + offsetInSlicePt;
+      const pdfX = (relLeft / containerRect.width) * pdfWidth;
+      const pdfW = (rect.width / containerRect.width) * pdfWidth;
+      const pdfH = (rect.height / containerRect.height) * (pdfWidth * (canvas.height / canvas.width));
+
+      pdf.setPage(pageIdx + 1);
+      pdf.link(pdfX, pdfY, pdfW, pdfH, { url: href });
     });
 
-    // Generate clean dynamic filename
-    const fullName = resumeState?.personalInfo?.fullName?.trim();
-    const safeName = fullName ? fullName.replace(/[^a-zA-Z0-9_-]/g, "_") : "Resume";
-    const filename = `${safeName}_Resume.pdf`;
-
-    pdf.save(filename);
+    const fullName = (resumeState.personalInfo.fullName || "Resume").trim().replace(/\s+/g, "_");
+    pdf.save(`${fullName}.pdf`);
   } catch (err) {
-    console.error("PDF generation failed:", err);
-    alert("An error occurred while generating the PDF. Please try again.");
+    console.error("PDF generation error:", err);
+    alert("An error occurred while generating your PDF. Please check the console for details.");
   } finally {
+    isGeneratingPdf = false;
     if (downloadBtn) {
       downloadBtn.disabled = false;
       downloadBtn.classList.remove("btn-loading");

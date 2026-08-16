@@ -1,4 +1,5 @@
 /* Executive / Top Dark Banner Resume Template (Reference Image 3) */
+/* SINGLE CONTINUOUS FULL-WIDTH LAYOUT */
 
 .resume--executive {
   font-family: Georgia, "Times New Roman", Times, serif;
@@ -10,11 +11,10 @@
   width: 100%;
   max-width: 794px;
   min-height: 1123px;
-  aspect-ratio: 210 / 297;
+  height: auto;
   margin: 0 auto;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
   box-sizing: border-box;
-  overflow: hidden;
 }
 
 .resume--executive .resume-banner {
@@ -90,23 +90,14 @@
   border-bottom-style: solid;
 }
 
-.resume--executive .resume-body-grid {
-  display: grid;
-  grid-template-columns: 240px 1fr;
-  gap: 1.75rem;
+.resume--executive .resume-body-content {
   padding: 1.75rem 2.25rem;
   box-sizing: border-box;
-}
-
-.resume--executive .resume-left-col {
-  border-right: 1px solid #e2e0dc;
-  padding-right: 1.5rem;
+  width: 100%;
 }
 
 .resume--executive .resume-section {
   margin-bottom: 1rem;
-  page-break-inside: avoid;
-  break-inside: avoid;
 }
 
 .resume--executive .resume-section:last-child {
@@ -135,8 +126,6 @@
 
 .resume--executive .resume-entry {
   margin-bottom: 0.65rem;
-  page-break-inside: avoid;
-  break-inside: avoid;
 }
 
 .resume--executive .resume-entry:last-child {

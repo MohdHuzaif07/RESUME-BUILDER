@@ -221,7 +221,10 @@ function loadStateFromStorage() {
       if (Array.isArray(parsed.certifications)) resumeState.certifications = parsed.certifications;
       if (Array.isArray(parsed.achievements)) resumeState.achievements = parsed.achievements;
       if (Array.isArray(parsed.languages)) resumeState.languages = parsed.languages;
-      if (typeof parsed.template === "string") resumeState.template = parsed.template;
+      if (typeof parsed.template === "string") {
+        const validTemplates = ["classic", "executive", "minimal"];
+        resumeState.template = validTemplates.includes(parsed.template) ? parsed.template : "classic";
+      }
       return true;
     }
   } catch (err) {

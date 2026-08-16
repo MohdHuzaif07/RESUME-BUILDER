@@ -225,18 +225,6 @@ body {
   transition: border-color var(--transition), color var(--transition), background-color var(--transition) !important;
 }
 
-.column-select:hover {
-  border-color: var(--color-primary) !important;
-  color: var(--color-primary) !important;
-  background-color: #eff6ff !important;
-}
-
-.column-select:focus {
-  outline: none !important;
-  border-color: var(--color-border-focus) !important;
-  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15) !important;
-}
-
 .btn-section-move {
   display: inline-flex;
   align-items: center;

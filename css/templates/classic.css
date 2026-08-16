@@ -99,8 +99,6 @@
 
 .resume--classic .resume-section {
   margin-bottom: 1.15rem;
-  page-break-inside: avoid;
-  break-inside: avoid;
 }
 
 .resume--classic .resume-section:last-child {

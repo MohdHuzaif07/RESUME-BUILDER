@@ -1,19 +1,5 @@
 /**
- * Renders the live resume preview from resumeState.
- *
- * Expected state shape:
- * resumeState.personalInfo — fullName, jobTitle, email, phone, location,
- *   linkedin, github, portfolio, summary, profileImage (data URL)
- * resumeState.education[] — institution, degree, startDate, endDate,
- *   currentlyStudying, description
- * resumeState.experience[] — company, jobTitle, startDate, endDate,
- *   currentlyWorking, description
- * resumeState.projects[] — name, url, technologies, description
- * resumeState.skills[] — string array
- * resumeState.certifications[] — name, issuer, issueDate, expiryDate, url
- * resumeState.achievements[] — title, date, description
- * resumeState.languages[] — language, proficiency
- * resumeState.template — "default" | "modern" | "classic"
+ * Renders the live resume preview from resumeState with exact multi-page break visual indicators.
  */
 
 function escapeHtml(value) {
@@ -25,13 +11,6 @@ function escapeHtml(value) {
 
 /**
  * Converts lightweight markdown-like syntax to HTML for resume descriptions and summaries.
- * Supported:
- *   * text, - text, • text, + text → bullet list items (<ul><li>...</li></ul>)
- *   **text** or __text__           → <strong>bold</strong>
- *   *text* or _text_               → <em>italic</em>
- *   Plain text lines               → <p> paragraphs
- *
- * All text is HTML-escaped first to prevent XSS.
  */
 function formatRichText(value) {
   if (value == null || value === "") return "";
@@ -43,8 +22,6 @@ function formatRichText(value) {
 
   for (const line of lines) {
     const trimmed = line.trim();
-
-    // Detect bullet lines starting with *, -, •, or +
     const bulletMatch = /^([*\-•+])\s*(.+)$/.exec(trimmed);
 
     if (bulletMatch) {
@@ -71,17 +48,10 @@ function formatRichText(value) {
   return result.join("");
 }
 
-/**
- * Applies inline formatting to already-escaped HTML text.
- * **text** or __text__ → <strong>text</strong>
- * *text* or _text_     → <em>text</em>
- */
 function applyInlineFormatting(escaped) {
   if (!escaped) return "";
-  // Bold: **text** or __text__
   let formatted = escaped.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
   formatted = formatted.replace(/__(.+?)__/g, "<strong>$1</strong>");
-  // Italic: *text* or _text_
   formatted = formatted.replace(/(?:^|[^*])\*([^*]+)\*(?!\*)/g, (match, p1) => {
     return match.replace(`*${p1}*`, `<em>${p1}</em>`);
   });
@@ -155,12 +125,16 @@ function renderPreview() {
   const previewEl = document.getElementById("resume-preview");
   if (!previewEl) return;
 
-  const templateKey = resumeState.template || "default";
+  const validTemplates = ["classic", "executive", "minimal"];
+  const templateKey = validTemplates.includes(resumeState.template)
+    ? resumeState.template
+    : "classic";
+
   const templateObj =
     window.ResumeTemplates && window.ResumeTemplates[templateKey]
       ? window.ResumeTemplates[templateKey]
-      : window.ResumeTemplates && window.ResumeTemplates["default"]
-      ? window.ResumeTemplates["default"]
+      : window.ResumeTemplates && window.ResumeTemplates["classic"]
+      ? window.ResumeTemplates["classic"]
       : null;
 
   const templateClass = `resume--${templateKey}`;
@@ -170,4 +144,3 @@ function renderPreview() {
     previewEl.innerHTML = templateObj.render(resumeState);
   }
 }
-
