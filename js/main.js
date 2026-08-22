@@ -396,11 +396,11 @@ function updatePhoneInputAttributes() {
   const codeText = document.getElementById("selected-code-text");
   if (!countrySelect || !phoneInput) return;
 
-  const selectedOpt = countrySelect.selectedOptions?.[0];
-  const requiredDigits = parseInt(selectedOpt?.dataset.digits || "10", 10);
+  const selectedOpt = countrySelect.selectedOptions?.[0] || countrySelect.options[countrySelect.selectedIndex] || countrySelect.options[0];
+  const requiredDigits = parseInt(selectedOpt?.dataset?.digits || "10", 10);
   const countryCode = selectedOpt?.value || "+91";
-  const isoCode = selectedOpt?.dataset.iso || "in";
-  const countryName = selectedOpt?.dataset.name || "India";
+  const isoCode = selectedOpt?.dataset?.iso || "in";
+  const countryName = selectedOpt?.dataset?.name || "India";
 
   phoneInput.maxLength = requiredDigits;
   phoneInput.placeholder = `${requiredDigits}-digit number`;
@@ -856,7 +856,15 @@ function initPhoneInput() {
       `;
 
       li.addEventListener("click", () => {
-        countrySelect.value = code;
+        const optToSelect = Array.from(countrySelect.options).find(
+          (o) => (o.dataset.iso || "").toLowerCase() === iso.toLowerCase()
+        );
+        if (optToSelect) {
+          countrySelect.value = optToSelect.value;
+          countrySelect.selectedIndex = optToSelect.index;
+        } else {
+          countrySelect.value = code;
+        }
         updatePhoneInputAttributes();
         closeCountryDropdown();
         validatePhone();
@@ -958,6 +966,7 @@ function initPhoneInput() {
     });
   }
 
+  renderCountryOptions();
   updatePhoneInputAttributes();
 }
 
