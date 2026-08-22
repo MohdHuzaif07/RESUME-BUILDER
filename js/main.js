@@ -10,7 +10,6 @@ const PERSONAL_FIELDS = [
   { id: "full-name", key: "fullName" },
   { id: "job-title", key: "jobTitle" },
   { id: "email", key: "email" },
-  { id: "phone", key: "phone" },
   { id: "location", key: "location" },
   { id: "linkedin", key: "linkedin" },
   { id: "github", key: "github" },
@@ -91,6 +90,16 @@ function syncPersonalInfoFromForm() {
       info[key] = field.value.trim();
     }
   });
+
+  const countrySelect = document.getElementById("country-code");
+  const phoneInput = document.getElementById("phone");
+  if (countrySelect && phoneInput) {
+    const countryCode = countrySelect.value || "+91";
+    const digitsOnly = phoneInput.value.replace(/\D/g, "");
+    info.countryCode = countryCode;
+    info.phoneNumber = digitsOnly;
+    info.phone = digitsOnly.length > 0 ? `${countryCode} ${digitsOnly}` : "";
+  }
 
   resumeState.personalInfo = info;
 }
@@ -262,6 +271,22 @@ function populateFormFromState() {
     }
   });
 
+  const countrySelect = document.getElementById("country-code");
+  const phoneInput = document.getElementById("phone");
+  if (countrySelect && phoneInput) {
+    if (info.countryCode) {
+      countrySelect.value = info.countryCode;
+    }
+    if (info.phoneNumber !== undefined && info.phoneNumber !== "") {
+      phoneInput.value = info.phoneNumber;
+    } else if (info.phone) {
+      // If legacy or composite format like "+91 9876543210" or "9876543210"
+      const digitsOnly = info.phone.replace(/\D/g, "");
+      phoneInput.value = digitsOnly;
+    }
+    updatePhoneInputAttributes();
+  }
+
   if (info.profileImage) {
     showProfileImagePreview(info.profileImage);
   }
@@ -364,23 +389,60 @@ function validatePortfolio() {
   return validateUrlField("portfolio", "portfolio-error", "portfolio");
 }
 
-function validatePhone() {
-  const value = document.getElementById("phone")?.value.trim() || "";
-  // Phone is optional — only validate if user entered something
-  if (!value) return true;
-  const valid = isValidPhone(value);
-  // No dedicated error span in HTML for phone, so use a lightweight approach
+function updatePhoneInputAttributes() {
+  const countrySelect = document.getElementById("country-code");
   const phoneInput = document.getElementById("phone");
-  if (phoneInput) {
-    if (valid) {
-      phoneInput.classList.remove("invalid");
-      phoneInput.title = "";
-    } else {
-      phoneInput.classList.add("invalid");
-      phoneInput.title = "Enter a valid phone number.";
-    }
+  const flagImg = document.getElementById("selected-flag-img");
+  const codeText = document.getElementById("selected-code-text");
+  if (!countrySelect || !phoneInput) return;
+
+  const selectedOpt = countrySelect.selectedOptions?.[0];
+  const requiredDigits = parseInt(selectedOpt?.dataset.digits || "10", 10);
+  const countryCode = selectedOpt?.value || "+91";
+  const isoCode = selectedOpt?.dataset.iso || "in";
+  const countryName = selectedOpt?.dataset.name || "India";
+
+  phoneInput.maxLength = requiredDigits;
+  phoneInput.placeholder = `${requiredDigits}-digit number`;
+
+  if (flagImg) {
+    flagImg.src = `https://flagcdn.com/w40/${isoCode}.png`;
+    flagImg.alt = `${countryName} flag`;
   }
-  return valid;
+  if (codeText) {
+    codeText.textContent = countryCode;
+  }
+
+  if (phoneInput.value.length > requiredDigits) {
+    phoneInput.value = phoneInput.value.slice(0, requiredDigits);
+  }
+}
+
+function validatePhone() {
+  const phoneInput = document.getElementById("phone");
+  const countrySelect = document.getElementById("country-code");
+  if (!phoneInput) return true;
+
+  const value = phoneInput.value.trim();
+  // Phone is optional — valid if empty
+  if (!value) {
+    setFieldError("phone", "phone-error", "");
+    return true;
+  }
+
+  const selectedOpt = countrySelect?.selectedOptions?.[0];
+  const requiredDigits = parseInt(selectedOpt?.dataset.digits || "10", 10);
+  const countryName = selectedOpt?.dataset.name || "selected country";
+  const countryCode = countrySelect?.value || "+91";
+
+  if (typeof isValidExactPhone === "function" ? !isValidExactPhone(value, requiredDigits) : value.length !== requiredDigits) {
+    const errorMsg = `Enter exactly ${requiredDigits} digits for ${countryName} (${countryCode}). (${value.length}/${requiredDigits})`;
+    setFieldError("phone", "phone-error", errorMsg);
+    return false;
+  }
+
+  setFieldError("phone", "phone-error", "");
+  return true;
 }
 
 /* ─── Character Counter ─── */
@@ -747,10 +809,163 @@ function initDownloadPdf() {
   }
 }
 
+function initPhoneInput() {
+  const countryPicker = document.getElementById("country-picker");
+  const pickerBtn = document.getElementById("country-picker-btn");
+  const dropdownMenu = document.getElementById("country-dropdown-menu");
+  const searchInput = document.getElementById("country-search-input");
+  const optionsList = document.getElementById("country-options-list");
+  const countrySelect = document.getElementById("country-code");
+  const phoneInput = document.getElementById("phone");
+  if (!phoneInput) return;
+
+  function renderCountryOptions(filterText = "") {
+    if (!optionsList || !countrySelect) return;
+    const query = filterText.toLowerCase().trim();
+    const options = Array.from(countrySelect.options);
+    optionsList.innerHTML = "";
+
+    options.forEach((opt) => {
+      const name = opt.dataset.name || opt.text;
+      const code = opt.value;
+      const iso = opt.dataset.iso || "in";
+      const digits = opt.dataset.digits || "10";
+
+      if (query) {
+        const matchesName = name.toLowerCase().includes(query);
+        const matchesCode = code.toLowerCase().includes(query);
+        const matchesIso = iso.toLowerCase().includes(query);
+        if (!matchesName && !matchesCode && !matchesIso) {
+          return;
+        }
+      }
+
+      const li = document.createElement("li");
+      li.className = `country-option ${opt.selected ? "selected" : ""}`;
+      li.setAttribute("role", "option");
+      li.setAttribute("aria-selected", String(opt.selected));
+      li.dataset.value = code;
+      li.dataset.iso = iso;
+      li.dataset.digits = digits;
+      li.dataset.name = name;
+
+      li.innerHTML = `
+        <img class="country-option-flag" src="https://flagcdn.com/w40/${iso}.png" alt="${escapeHtml(name)} flag" width="20" height="15" loading="lazy">
+        <span class="country-option-name">${escapeHtml(name)}</span>
+        <span class="country-option-code">(${escapeHtml(code)})</span>
+      `;
+
+      li.addEventListener("click", () => {
+        countrySelect.value = code;
+        updatePhoneInputAttributes();
+        closeCountryDropdown();
+        validatePhone();
+        updateStateAndPreview();
+        phoneInput.focus();
+      });
+
+      optionsList.appendChild(li);
+    });
+
+    if (optionsList.children.length === 0) {
+      const emptyLi = document.createElement("li");
+      emptyLi.className = "country-option";
+      emptyLi.style.color = "var(--color-text-muted)";
+      emptyLi.style.cursor = "default";
+      emptyLi.textContent = "No countries found";
+      optionsList.appendChild(emptyLi);
+    }
+  }
+
+  function openCountryDropdown() {
+    if (!dropdownMenu || !countryPicker) return;
+    dropdownMenu.hidden = false;
+    countryPicker.classList.add("open");
+    pickerBtn?.setAttribute("aria-expanded", "true");
+    renderCountryOptions(searchInput?.value || "");
+    setTimeout(() => searchInput?.focus(), 50);
+  }
+
+  function closeCountryDropdown() {
+    if (!dropdownMenu || !countryPicker) return;
+    dropdownMenu.hidden = true;
+    countryPicker.classList.remove("open");
+    pickerBtn?.setAttribute("aria-expanded", "false");
+    if (searchInput) searchInput.value = "";
+  }
+
+  if (pickerBtn) {
+    pickerBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      if (dropdownMenu?.hidden) {
+        openCountryDropdown();
+      } else {
+        closeCountryDropdown();
+      }
+    });
+  }
+
+  if (searchInput) {
+    searchInput.addEventListener("input", (e) => {
+      renderCountryOptions(e.target.value);
+    });
+    searchInput.addEventListener("click", (e) => e.stopPropagation());
+  }
+
+  // Close dropdown on clicking outside
+  document.addEventListener("click", (e) => {
+    if (countryPicker && !countryPicker.contains(e.target)) {
+      closeCountryDropdown();
+    }
+  });
+
+  // Close on Escape key
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && dropdownMenu && !dropdownMenu.hidden) {
+      closeCountryDropdown();
+      pickerBtn?.focus();
+    }
+  });
+
+  // Block non-numeric characters on typing
+  phoneInput.addEventListener("beforeinput", (e) => {
+    if (e.data && /\D/.test(e.data)) {
+      e.preventDefault();
+    }
+  });
+
+  // Sanitize on input / paste and enforce length
+  phoneInput.addEventListener("input", (e) => {
+    const select = document.getElementById("country-code");
+    const requiredDigits = parseInt(select?.selectedOptions?.[0]?.dataset.digits || "10", 10);
+    const digitsOnly = e.target.value.replace(/\D/g, "");
+    const truncated = digitsOnly.slice(0, requiredDigits);
+
+    if (e.target.value !== truncated) {
+      e.target.value = truncated;
+    }
+
+    validatePhone();
+  });
+
+  phoneInput.addEventListener("blur", validatePhone);
+
+  if (countrySelect) {
+    countrySelect.addEventListener("change", () => {
+      updatePhoneInputAttributes();
+      validatePhone();
+      updateStateAndPreview();
+    });
+  }
+
+  updatePhoneInputAttributes();
+}
+
 function initApp() {
   initFormListeners();
   initDynamicSections();
   initValidation();
+  initPhoneInput();
   initProfileImage();
   initDownloadPdf();
   initMobileToggle();

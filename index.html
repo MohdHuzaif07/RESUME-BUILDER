@@ -104,15 +104,109 @@
             </div>
 
             <div class="form-group">
-              <label for="phone">Phone</label>
-              <input
-                type="tel"
-                id="phone"
-                name="phone"
-                maxlength="20"
-                autocomplete="tel"
-                placeholder="+1 (555) 123-4567"
-              >
+              <label for="phone">Phone Number</label>
+              <div class="phone-input-group">
+                <!-- Custom Flag Dropdown Picker with Real Country Flag Images -->
+                <div class="custom-country-picker" id="country-picker">
+                  <button
+                    type="button"
+                    class="country-picker-btn"
+                    id="country-picker-btn"
+                    aria-haspopup="listbox"
+                    aria-expanded="false"
+                    aria-label="Select Country"
+                  >
+                    <img class="country-flag-icon" id="selected-flag-img" src="https://flagcdn.com/w40/in.png" alt="India flag" width="20" height="15">
+                    <span class="country-code-text" id="selected-code-text">+91</span>
+                    <svg class="country-dropdown-arrow" width="10" height="10" viewBox="0 0 12 12" fill="currentColor" aria-hidden="true">
+                      <path d="M6 8L1 3h10z"/>
+                    </svg>
+                  </button>
+
+                  <div class="country-dropdown-menu" id="country-dropdown-menu" hidden>
+                    <div class="country-search-wrap">
+                      <input
+                        type="text"
+                        id="country-search-input"
+                        class="country-search-input"
+                        placeholder="Search country or code..."
+                        autocomplete="off"
+                        aria-label="Search countries"
+                      >
+                    </div>
+                    <ul class="country-options-list" id="country-options-list" role="listbox" tabindex="-1">
+                      <!-- Rendered by JS / Fallback HTML -->
+                    </ul>
+                  </div>
+
+                  <!-- Standard Select for Form / Validation Compatibility -->
+                  <select
+                    id="country-code"
+                    name="countryCode"
+                    class="sr-only"
+                    aria-label="Country Code"
+                    tabindex="-1"
+                  >
+                    <option value="+91" data-iso="in" data-digits="10" data-name="India" selected>India (+91)</option>
+                    <option value="+1" data-iso="us" data-digits="10" data-name="United States">United States (+1)</option>
+                    <option value="+44" data-iso="gb" data-digits="10" data-name="United Kingdom">United Kingdom (+44)</option>
+                    <option value="+1" data-iso="ca" data-digits="10" data-name="Canada">Canada (+1)</option>
+                    <option value="+61" data-iso="au" data-digits="9" data-name="Australia">Australia (+61)</option>
+                    <option value="+971" data-iso="ae" data-digits="9" data-name="UAE">United Arab Emirates (+971)</option>
+                    <option value="+966" data-iso="sa" data-digits="9" data-name="Saudi Arabia">Saudi Arabia (+966)</option>
+                    <option value="+49" data-iso="de" data-digits="10" data-name="Germany">Germany (+49)</option>
+                    <option value="+33" data-iso="fr" data-digits="9" data-name="France">France (+33)</option>
+                    <option value="+65" data-iso="sg" data-digits="8" data-name="Singapore">Singapore (+65)</option>
+                    <option value="+92" data-iso="pk" data-digits="10" data-name="Pakistan">Pakistan (+92)</option>
+                    <option value="+880" data-iso="bd" data-digits="10" data-name="Bangladesh">Bangladesh (+880)</option>
+                    <option value="+974" data-iso="qa" data-digits="8" data-name="Qatar">Qatar (+974)</option>
+                    <option value="+965" data-iso="kw" data-digits="8" data-name="Kuwait">Kuwait (+965)</option>
+                    <option value="+968" data-iso="om" data-digits="8" data-name="Oman">Oman (+968)</option>
+                    <option value="+973" data-iso="bh" data-digits="8" data-name="Bahrain">Bahrain (+973)</option>
+                    <option value="+81" data-iso="jp" data-digits="10" data-name="Japan">Japan (+81)</option>
+                    <option value="+86" data-iso="cn" data-digits="11" data-name="China">China (+86)</option>
+                    <option value="+55" data-iso="br" data-digits="11" data-name="Brazil">Brazil (+55)</option>
+                    <option value="+7" data-iso="ru" data-digits="10" data-name="Russia">Russia (+7)</option>
+                    <option value="+27" data-iso="za" data-digits="9" data-name="South Africa">South Africa (+27)</option>
+                    <option value="+234" data-iso="ng" data-digits="10" data-name="Nigeria">Nigeria (+234)</option>
+                    <option value="+39" data-iso="it" data-digits="10" data-name="Italy">Italy (+39)</option>
+                    <option value="+34" data-iso="es" data-digits="9" data-name="Spain">Spain (+34)</option>
+                    <option value="+31" data-iso="nl" data-digits="9" data-name="Netherlands">Netherlands (+31)</option>
+                    <option value="+41" data-iso="ch" data-digits="9" data-name="Switzerland">Switzerland (+41)</option>
+                    <option value="+46" data-iso="se" data-digits="9" data-name="Sweden">Sweden (+46)</option>
+                    <option value="+47" data-iso="no" data-digits="8" data-name="Norway">Norway (+47)</option>
+                    <option value="+45" data-iso="dk" data-digits="8" data-name="Denmark">Denmark (+45)</option>
+                    <option value="+64" data-iso="nz" data-digits="9" data-name="New Zealand">New Zealand (+64)</option>
+                    <option value="+60" data-iso="my" data-digits="9" data-name="Malaysia">Malaysia (+60)</option>
+                    <option value="+63" data-iso="ph" data-digits="10" data-name="Philippines">Philippines (+63)</option>
+                    <option value="+62" data-iso="id" data-digits="10" data-name="Indonesia">Indonesia (+62)</option>
+                    <option value="+90" data-iso="tr" data-digits="10" data-name="Turkey">Turkey (+90)</option>
+                    <option value="+20" data-iso="eg" data-digits="10" data-name="Egypt">Egypt (+20)</option>
+                    <option value="+94" data-iso="lk" data-digits="9" data-name="Sri Lanka">Sri Lanka (+94)</option>
+                    <option value="+977" data-iso="np" data-digits="10" data-name="Nepal">Nepal (+977)</option>
+                    <option value="+353" data-iso="ie" data-digits="9" data-name="Ireland">Ireland (+353)</option>
+                    <option value="+82" data-iso="kr" data-digits="10" data-name="South Korea">South Korea (+82)</option>
+                    <option value="+52" data-iso="mx" data-digits="10" data-name="Mexico">Mexico (+52)</option>
+                    <option value="+54" data-iso="ar" data-digits="10" data-name="Argentina">Argentina (+54)</option>
+                    <option value="+48" data-iso="pl" data-digits="9" data-name="Poland">Poland (+48)</option>
+                    <option value="+351" data-iso="pt" data-digits="9" data-name="Portugal">Portugal (+351)</option>
+                    <option value="+32" data-iso="be" data-digits="9" data-name="Belgium">Belgium (+32)</option>
+                    <option value="+43" data-iso="at" data-digits="10" data-name="Austria">Austria (+43)</option>
+                  </select>
+                </div>
+
+                <input
+                  type="tel"
+                  id="phone"
+                  name="phone"
+                  inputmode="numeric"
+                  pattern="[0-9]*"
+                  maxlength="10"
+                  autocomplete="tel-national"
+                  placeholder="10-digit number"
+                >
+              </div>
+              <span class="error-message" id="phone-error" role="alert"></span>
             </div>
           </div>
 

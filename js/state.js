@@ -72,6 +72,8 @@ const resumeState = {
     jobTitle: "",
     email: "",
     phone: "",
+    countryCode: "+91",
+    phoneNumber: "",
     location: "",
     linkedin: "",
     github: "",

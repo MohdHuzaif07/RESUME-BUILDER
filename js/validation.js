@@ -47,9 +47,25 @@ function isValidPhone(phone) {
   const trimmed = phone.trim();
   if (trimmed.length === 0 || trimmed.length > 25) return false;
 
-  // Allows standard international (+123) and local phone formats
-  const phoneRegex = /^[+]?[(]?[0-9]{1,4}[)]?[-\s./0-9]{5,20}$/;
-  return phoneRegex.test(trimmed);
+  // Allows international (+1), area code parentheses, spaces, dots, hyphens, and digits
+  if (!/^[+]?[(]?[0-9\s\-().]{6,25}$/.test(trimmed)) return false;
+
+  // Must contain between 7 and 15 digits (standard E.164 range)
+  const digitCount = (trimmed.match(/\d/g) || []).length;
+  return digitCount >= 7 && digitCount <= 15;
+}
+
+/**
+ * Validates whether a phone number string contains only digits and matches the exact required length.
+ * @param {string} phone - Phone number input
+ * @param {number} exactDigits - Required exact number of digits for the country
+ * @returns {boolean} True if phone consists of only digits and matches the exact length
+ */
+function isValidExactPhone(phone, exactDigits) {
+  if (!phone || typeof phone !== "string") return false;
+  const trimmed = phone.trim();
+  if (!/^\d+$/.test(trimmed)) return false;
+  return trimmed.length === exactDigits;
 }
 
 /**
