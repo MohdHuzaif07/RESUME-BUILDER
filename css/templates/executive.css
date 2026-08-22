@@ -210,3 +210,46 @@
   margin-bottom: 0.3rem;
   font-size: 0.76rem;
 }
+
+/* Responsive */
+
+@media (max-width: 480px) {
+  .resume--executive .resume-banner {
+    flex-direction: column;
+    text-align: center;
+    padding: 1rem 1.25rem;
+    gap: 0.75rem;
+  }
+
+  .resume--executive .resume-photo {
+    width: 64px;
+    height: 64px;
+  }
+
+  .resume--executive .resume-name {
+    font-size: 1.375rem;
+  }
+
+  .resume--executive .resume-contact-bar {
+    padding: 0.5rem 1.25rem;
+  }
+
+  .resume--executive .resume-contact,
+  .resume--executive .resume-links {
+    justify-content: center;
+    font-size: 0.72rem;
+  }
+
+  .resume--executive .resume-body-content {
+    padding: 1.25rem;
+  }
+
+  .resume--executive .resume-entry-header {
+    flex-direction: column;
+    gap: 0.125rem;
+  }
+
+  .resume--executive .resume-entry-date {
+    white-space: normal;
+  }
+}

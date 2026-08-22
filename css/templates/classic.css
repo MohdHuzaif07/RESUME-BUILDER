@@ -218,3 +218,49 @@
   font-style: italic;
   color: #555555;
 }
+
+/* Responsive */
+
+@media (max-width: 480px) {
+  .resume--classic {
+    padding: 1rem;
+  }
+
+  .resume--classic .resume-header {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .resume--classic .resume-header.has-photo {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .resume--classic .resume-header.has-photo .resume-contact {
+    justify-content: center;
+  }
+
+  .resume--classic .resume-photo {
+    width: 72px;
+    height: 72px;
+  }
+
+  .resume--classic .resume-name {
+    font-size: 1.375rem;
+  }
+
+  .resume--classic .resume-entry-header {
+    flex-direction: column;
+    gap: 0.125rem;
+  }
+
+  .resume--classic .resume-entry-date {
+    white-space: normal;
+  }
+
+  .resume--classic .resume-contact {
+    justify-content: center;
+  }
+}

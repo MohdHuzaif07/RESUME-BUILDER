@@ -28,7 +28,7 @@ function getPageBreaks(previewEl, canvas, page1CanvasHeight, page2CanvasHeight) 
     .filter((b) => b.height > 0)
     .sort((a, b) => a.top - b.top);
 
-  const breaks = [0];
+  const breaks = [1];
   let currentY = 0;
   const totalCanvasHeight = canvas.height;
   let pageIdx = 0;

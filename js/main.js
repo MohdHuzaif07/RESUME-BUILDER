@@ -557,6 +557,37 @@ function handleDownloadPdf() {
   }
 }
 
+/* ─── Mobile Panel Toggle ─── */
+
+function initMobileToggle() {
+  const toggleNav = document.querySelector(".mobile-panel-toggle");
+  const appMain = document.querySelector(".app-main");
+  if (!toggleNav || !appMain) return;
+
+  // Default: show editor on mobile
+  appMain.classList.add("show-editor");
+
+  toggleNav.addEventListener("click", (e) => {
+    const btn = e.target.closest(".toggle-btn");
+    if (!btn) return;
+
+    const panel = btn.dataset.panel;
+
+    // Update button active states
+    toggleNav.querySelectorAll(".toggle-btn").forEach((b) => b.classList.remove("active"));
+    btn.classList.add("active");
+
+    // Toggle panel visibility
+    if (panel === "preview") {
+      appMain.classList.remove("show-editor");
+      appMain.classList.add("show-preview");
+    } else {
+      appMain.classList.remove("show-preview");
+      appMain.classList.add("show-editor");
+    }
+  });
+}
+
 /* ─── Initialization ─── */
 
 function initDynamicSections() {
@@ -614,6 +645,7 @@ function initApp() {
   initValidation();
   initProfileImage();
   initDownloadPdf();
+  initMobileToggle();
 
   const hasLoadedData = loadStateFromStorage();
   if (hasLoadedData) {

@@ -627,6 +627,7 @@ textarea.invalid:focus {
 
 /* Responsive */
 
+/* Tablet: stack editor and preview vertically */
 @media (max-width: 1024px) {
   .app-main {
     grid-template-columns: 1fr;
@@ -638,9 +639,10 @@ textarea.invalid:focus {
   }
 }
 
-@media (max-width: 640px) {
+/* Mobile-landscape / small tablet */
+@media (max-width: 768px) {
   .app-header {
-    padding: var(--spacing-md);
+    padding: var(--spacing-md) var(--spacing-lg);
   }
 
   .app-header h1 {
@@ -661,8 +663,73 @@ textarea.invalid:focus {
     padding: var(--spacing-md);
   }
 
+  .reorder-legend {
+    flex-wrap: wrap;
+    gap: var(--spacing-xs) var(--spacing-sm);
+  }
+
+  .section-reorder-btns {
+    margin-left: auto;
+  }
+}
+
+/* Mobile phones */
+@media (max-width: 640px) {
+  .app-header {
+    padding: var(--spacing-sm) var(--spacing-md);
+    text-align: center;
+  }
+
+  .app-header h1 {
+    font-size: 1.25rem;
+  }
+
+  .app-tagline {
+    font-size: 0.8125rem;
+  }
+
+  .app-main {
+    padding: var(--spacing-sm);
+    gap: var(--spacing-sm);
+  }
+
+  .editor-panel,
+  .preview-panel {
+    padding: var(--spacing-sm);
+    border-radius: var(--radius-md);
+  }
+
+  .editor-panel h2,
+  .preview-panel h2 {
+    font-size: 1rem;
+    margin-bottom: var(--spacing-md);
+    padding-bottom: var(--spacing-sm);
+  }
+
+  .preview-panel-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--spacing-sm);
+  }
+
+  .preview-panel-header .btn-primary {
+    width: 100%;
+  }
+
+  .form-section {
+    padding: var(--spacing-sm);
+  }
+
+  .form-section legend {
+    font-size: 0.8125rem;
+  }
+
   .form-row {
     grid-template-columns: 1fr;
+  }
+
+  .dynamic-entry {
+    padding: var(--spacing-sm);
   }
 
   .dynamic-entry-header {
@@ -672,6 +739,141 @@ textarea.invalid:focus {
 
   .dynamic-entry-header .btn-remove {
     width: 100%;
+  }
+
+  .btn {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.8125rem;
+  }
+
+  .profile-image-preview {
+    width: 90px;
+    height: 90px;
+  }
+
+  .reorder-legend {
+    flex-wrap: wrap;
+    font-size: 0.8125rem;
+  }
+
+  .section-title-text {
+    flex: 0 1 auto;
+    min-width: 0;
+  }
+
+  .btn-section-move {
+    width: 1.375rem;
+    height: 1.375rem;
+    font-size: 0.625rem;
+  }
+
+  .column-select {
+    font-size: 0.6875rem !important;
+    min-width: 5.5rem !important;
+    height: 1.5rem !important;
+  }
+
+  /* Inputs – slightly smaller padding on small screens */
+  input[type="text"],
+  input[type="email"],
+  input[type="tel"],
+  input[type="url"],
+  input[type="month"],
+  input[type="file"],
+  select,
+  textarea {
+    padding: 0.5rem 0.625rem;
+    font-size: 0.8125rem;
+  }
+
+  .storage-warning-banner {
+    padding: var(--spacing-sm) var(--spacing-md);
+    font-size: 0.75rem;
+  }
+}
+
+/* Very narrow screens (320px-400px) */
+@media (max-width: 400px) {
+  .app-header h1 {
+    font-size: 1.125rem;
+  }
+
+  .app-tagline {
+    font-size: 0.75rem;
+  }
+
+  .form-section {
+    padding: var(--spacing-xs);
+  }
+
+  .editor-panel,
+  .preview-panel {
+    padding: var(--spacing-xs);
+  }
+
+  .profile-image-preview {
+    width: 72px;
+    height: 72px;
+  }
+
+  label {
+    font-size: 0.75rem;
+  }
+
+  .btn {
+    padding: 0.4375rem 0.625rem;
+    font-size: 0.75rem;
+  }
+}
+
+/* Mobile panel toggle */
+
+.mobile-panel-toggle {
+  display: none;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background-color: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+  padding: var(--spacing-xs) var(--spacing-md);
+  gap: var(--spacing-xs);
+}
+
+.mobile-panel-toggle .toggle-btn {
+  flex: 1;
+  padding: 0.5rem 1rem;
+  font-family: inherit;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  background-color: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background-color var(--transition), color var(--transition), border-color var(--transition);
+}
+
+.mobile-panel-toggle .toggle-btn:hover {
+  background-color: var(--color-bg);
+}
+
+.mobile-panel-toggle .toggle-btn.active {
+  color: #fff;
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+@media (max-width: 1024px) {
+  .mobile-panel-toggle {
+    display: flex;
+  }
+
+  .app-main.show-preview .editor-panel {
+    display: none;
+  }
+
+  .app-main.show-editor .preview-panel {
+    display: none;
   }
 }
 
@@ -688,6 +890,7 @@ textarea.invalid:focus {
   .app-header,
   .editor-panel,
   .preview-panel-header,
+  .mobile-panel-toggle,
   .btn,
   .field-hint,
   .error-message {
