@@ -46,10 +46,22 @@ body {
 
 /* Header */
 
+@keyframes appEntrance {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .app-header {
   padding: var(--spacing-lg) var(--spacing-xl);
   background-color: var(--color-surface);
   border-bottom: 1px solid var(--color-border);
+  animation: appEntrance 0.35s cubic-bezier(0.16, 1, 0.3, 1) backwards;
 }
 
 .app-header h1 {
@@ -84,6 +96,15 @@ body {
   border-radius: var(--radius-lg);
   padding: var(--spacing-lg);
   box-shadow: var(--shadow-sm);
+  transition: box-shadow 0.25s ease;
+}
+
+.editor-panel {
+  animation: appEntrance 0.45s cubic-bezier(0.16, 1, 0.3, 1) 0.05s backwards;
+}
+
+.preview-panel {
+  animation: appEntrance 0.45s cubic-bezier(0.16, 1, 0.3, 1) 0.1s backwards;
 }
 
 .editor-panel h2,
@@ -326,7 +347,10 @@ textarea {
   background-color: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
-  transition: border-color var(--transition), box-shadow var(--transition);
+  transition: border-color 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+              box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+              background-color 0.2s ease,
+              transform 0.15s ease;
 }
 
 input[type="text"]::placeholder,
@@ -335,6 +359,7 @@ input[type="tel"]::placeholder,
 input[type="url"]::placeholder,
 textarea::placeholder {
   color: var(--color-text-subtle);
+  transition: color 0.15s ease;
 }
 
 input[type="text"]:hover,
@@ -356,7 +381,8 @@ select:focus,
 textarea:focus {
   outline: none;
   border-color: var(--color-border-focus);
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.14);
+  background-color: #ffffff;
 }
 
 textarea {
@@ -610,13 +636,24 @@ textarea.invalid:focus {
 
 .error-message {
   display: block;
-  min-height: 1.125rem;
+  min-height: 0;
+  max-height: 0;
+  opacity: 0;
   font-size: 0.75rem;
   color: var(--color-error);
+  overflow: hidden;
+  transform: translateY(-4px);
+  transition: max-height 0.22s cubic-bezier(0.16, 1, 0.3, 1),
+              opacity 0.2s ease,
+              transform 0.2s ease,
+              margin 0.2s ease;
 }
 
-.error-message:empty {
-  display: none;
+.error-message:not(:empty) {
+  max-height: 48px;
+  opacity: 1;
+  transform: translateY(0);
+  margin-top: 4px;
 }
 
 /* Profile image preview */
@@ -631,6 +668,7 @@ textarea.invalid:focus {
   background-color: var(--color-surface);
   border: 1px dashed var(--color-border);
   border-radius: var(--radius-md);
+  transition: border-color var(--transition);
 }
 
 .image-preview-wrapper[hidden] {
@@ -643,6 +681,12 @@ textarea.invalid:focus {
   object-fit: cover;
   border-radius: 50%;
   border: 2px solid var(--color-border);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.profile-image-preview:hover {
+  transform: scale(1.03);
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.12);
 }
 
 /* Buttons */
@@ -661,7 +705,23 @@ textarea.invalid:focus {
   border: 1px solid transparent;
   border-radius: var(--radius-sm);
   cursor: pointer;
-  transition: background-color var(--transition), border-color var(--transition), color var(--transition);
+  user-select: none;
+  touch-action: manipulation;
+  transition: background-color 0.18s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.18s cubic-bezier(0.16, 1, 0.3, 1),
+              color 0.18s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.12s ease,
+              box-shadow 0.18s ease;
+}
+
+.btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 3px 8px rgba(15, 23, 42, 0.1);
+}
+
+.btn:active:not(:disabled) {
+  transform: translateY(0) scale(0.98);
+  box-shadow: none;
 }
 
 .btn:focus-visible {
@@ -680,14 +740,42 @@ textarea.invalid:focus {
   border-color: var(--color-primary);
 }
 
-.btn-primary:hover {
+.btn-primary:hover:not(:disabled) {
   background-color: var(--color-primary-hover);
   border-color: var(--color-primary-hover);
 }
 
+.btn-success {
+  background-color: var(--color-success) !important;
+  border-color: var(--color-success) !important;
+  color: #ffffff !important;
+  transform: none !important;
+  box-shadow: 0 0 14px rgba(22, 163, 74, 0.35) !important;
+}
+
+@keyframes checkmarkPop {
+  0% {
+    transform: scale(0.5);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.checkmark-icon {
+  animation: checkmarkPop 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
 .btn-loading {
-  opacity: 0.8;
+  opacity: 0.85;
   cursor: wait;
+  pointer-events: none;
+  transform: none !important;
 }
 
 @keyframes spin {
@@ -703,14 +791,13 @@ textarea.invalid:focus {
   animation: spin 0.8s linear infinite;
 }
 
-
 .btn-secondary {
   color: var(--color-text);
   background-color: var(--color-surface);
   border-color: var(--color-border);
 }
 
-.btn-secondary:hover {
+.btn-secondary:hover:not(:disabled) {
   background-color: var(--color-bg);
   border-color: #b8c2cf;
 }
@@ -721,7 +808,7 @@ textarea.invalid:focus {
   border-color: #fecaca;
 }
 
-.btn-danger:hover {
+.btn-danger:hover:not(:disabled) {
   color: #fff;
   background-color: var(--color-danger);
   border-color: var(--color-danger);
@@ -751,6 +838,18 @@ textarea.invalid:focus {
   background-color: var(--color-surface);
   border: 1px dashed var(--color-border);
   border-radius: var(--radius-md);
+  transition: border-color var(--transition);
+}
+
+@keyframes entrySlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 .dynamic-entry {
@@ -758,6 +857,13 @@ textarea.invalid:focus {
   background-color: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
+  animation: entrySlideIn 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.dynamic-entry:hover {
+  border-color: #cbd5e1;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
 }
 
 .dynamic-entry-header {
@@ -1050,13 +1156,38 @@ textarea.invalid:focus {
 }
 
 .crop-modal[hidden] {
-  display: none;
+  display: none !important;
+}
+
+@keyframes backdropFade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes modalScaleUp {
+  from {
+    opacity: 0;
+    transform: scale(0.94) translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.crop-modal:not([hidden]) .crop-modal-backdrop {
+  animation: backdropFade 0.22s ease-out;
 }
 
 .crop-modal-backdrop {
   position: absolute;
   inset: 0;
   background-color: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(2px);
+}
+
+.crop-modal:not([hidden]) .crop-modal-content {
+  animation: modalScaleUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .crop-modal-content {
@@ -1070,6 +1201,7 @@ textarea.invalid:focus {
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  transition: transform 0.2s ease;
 }
 
 .crop-modal-header {
@@ -1159,7 +1291,7 @@ textarea.invalid:focus {
 
 .mobile-panel-toggle .toggle-btn {
   flex: 1;
-  padding: 0.5rem 1rem;
+  padding: 0.55rem 1rem;
   font-family: inherit;
   font-size: 0.875rem;
   font-weight: 500;
@@ -1168,17 +1300,20 @@ textarea.invalid:focus {
   border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
   cursor: pointer;
-  transition: background-color var(--transition), color var(--transition), border-color var(--transition);
+  touch-action: manipulation;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.mobile-panel-toggle .toggle-btn:hover {
+.mobile-panel-toggle .toggle-btn:hover:not(.active) {
   background-color: var(--color-bg);
+  transform: translateY(-1px);
 }
 
 .mobile-panel-toggle .toggle-btn.active {
   color: #fff;
   background-color: var(--color-primary);
   border-color: var(--color-primary);
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.25);
 }
 
 @media (max-width: 1024px) {
@@ -1190,8 +1325,18 @@ textarea.invalid:focus {
     display: none;
   }
 
+  .app-main.show-preview .preview-panel {
+    display: block;
+    animation: appEntrance 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
   .app-main.show-editor .preview-panel {
     display: none;
+  }
+
+  .app-main.show-editor .editor-panel {
+    display: block;
+    animation: appEntrance 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   }
 }
 

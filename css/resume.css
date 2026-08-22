@@ -17,6 +17,7 @@
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
   box-sizing: border-box;
   position: relative;
+  transition: box-shadow 0.25s ease, opacity 0.2s ease, transform 0.2s ease;
 }
 
 

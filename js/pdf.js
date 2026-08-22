@@ -224,15 +224,32 @@ async function downloadResumePdf() {
 
     const fullName = (resumeState.personalInfo.fullName || "Resume").trim().replace(/\s+/g, "_");
     pdf.save(`${fullName}.pdf`);
+
+    // Show smooth success state
+    if (downloadBtn) {
+      downloadBtn.classList.remove("btn-loading");
+      downloadBtn.classList.add("btn-success");
+      downloadBtn.innerHTML = `
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="checkmark-icon">
+          <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+        <span>PDF Downloaded!</span>
+      `;
+      setTimeout(() => {
+        downloadBtn.classList.remove("btn-success");
+        downloadBtn.innerHTML = originalBtnText;
+        downloadBtn.disabled = false;
+      }, 2000);
+    }
   } catch (err) {
     console.error("PDF generation error:", err);
     alert("An error occurred while generating your PDF. Please check the console for details.");
-  } finally {
-    isGeneratingPdf = false;
     if (downloadBtn) {
       downloadBtn.disabled = false;
       downloadBtn.classList.remove("btn-loading");
       downloadBtn.innerHTML = originalBtnText;
     }
+  } finally {
+    isGeneratingPdf = false;
   }
 }
