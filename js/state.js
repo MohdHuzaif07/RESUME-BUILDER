@@ -78,6 +78,7 @@ const resumeState = {
     portfolio: "",
     summary: "",
     profileImage: "",
+    originalProfileImage: "",
   },
   education: [],
   experience: [],

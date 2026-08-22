@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="css/templates/classic.css">
   <link rel="stylesheet" href="css/templates/minimal.css">
   <link rel="stylesheet" href="css/templates/executive.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.css">
 </head>
 <body>
   <header class="app-header">
@@ -73,6 +74,9 @@
                 src=""
                 alt="Profile preview"
               >
+              <button type="button" id="recrop-profile-image" class="btn btn-secondary btn-sm">
+                Crop
+              </button>
               <button type="button" id="remove-profile-image" class="btn btn-secondary btn-sm">
                 Remove Image
               </button>
@@ -593,6 +597,9 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
+  <!-- Image Cropping Library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.js"></script>
+
   <!-- Application Modules -->
   <script src="js/state.js"></script>
   <script src="js/validation.js"></script>
@@ -603,6 +610,25 @@
   <script src="js/templates/minimal.js"></script>
   <script src="js/templates/executive.js"></script>
   <script src="js/main.js"></script>
+
+  <!-- Image Crop Modal -->
+  <div class="crop-modal" id="crop-modal" hidden aria-modal="true" role="dialog" aria-label="Crop profile image">
+    <div class="crop-modal-backdrop" id="crop-modal-backdrop"></div>
+    <div class="crop-modal-content">
+      <div class="crop-modal-header">
+        <h3>Crop Profile Image</h3>
+      </div>
+      <div class="crop-modal-body">
+        <div class="crop-image-container">
+          <img id="crop-image" src="" alt="Image to crop">
+        </div>
+      </div>
+      <div class="crop-modal-footer">
+        <button type="button" id="crop-cancel-btn" class="btn btn-secondary">Cancel</button>
+        <button type="button" id="crop-apply-btn" class="btn btn-primary">Apply Crop</button>
+      </div>
+    </div>
+  </div>
 </body>
 </html>
 

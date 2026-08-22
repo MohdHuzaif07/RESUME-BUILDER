@@ -183,7 +183,7 @@ function saveStateToStorage() {
       try {
         const slimState = {
           ...resumeState,
-          personalInfo: { ...resumeState.personalInfo, profileImage: "" },
+          personalInfo: { ...resumeState.personalInfo, profileImage: "", originalProfileImage: "" },
         };
         localStorage.setItem(STORAGE_KEY, JSON.stringify(slimState));
         showStorageWarning(
@@ -443,6 +443,8 @@ function addDynamicEntry({ listId, templateId }) {
 
 /* ─── Profile Image ─── */
 
+let cropperInstance = null;
+
 function clearProfileImage() {
   const fileInput = document.getElementById("profile-image");
   const previewWrapper = document.getElementById("profile-image-preview-wrapper");
@@ -454,6 +456,7 @@ function clearProfileImage() {
   if (previewWrapper) previewWrapper.hidden = true;
 
   resumeState.personalInfo.profileImage = "";
+  resumeState.personalInfo.originalProfileImage = "";
   setFieldError("profile-image", "profile-image-error", "");
   updateStateAndPreview();
 }
@@ -467,6 +470,72 @@ function showProfileImagePreview(dataUrl) {
 
   resumeState.personalInfo.profileImage = dataUrl;
   renderPreview();
+}
+
+function openCropModal(dataUrl) {
+  const modal = document.getElementById("crop-modal");
+  const cropImage = document.getElementById("crop-image");
+  if (!modal || !cropImage) return;
+
+  // Destroy previous cropper instance if any
+  if (cropperInstance) {
+    cropperInstance.destroy();
+    cropperInstance = null;
+  }
+
+  cropImage.src = dataUrl;
+  modal.hidden = false;
+  document.body.style.overflow = "hidden"; // prevent background scrolling
+
+  // Wait for the image to load before initializing Cropper
+  cropImage.onload = () => {
+    cropperInstance = new Cropper(cropImage, {
+      aspectRatio: 1,
+      viewMode: 1,
+      dragMode: "move",
+      autoCropArea: 0.85,
+      responsive: true,
+      restore: false,
+      guides: true,
+      center: true,
+      highlight: false,
+      cropBoxMovable: true,
+      cropBoxResizable: true,
+      toggleDragModeOnDblclick: false,
+    });
+  };
+}
+
+function closeCropModal() {
+  const modal = document.getElementById("crop-modal");
+  if (modal) modal.hidden = true;
+  document.body.style.overflow = "";
+
+  if (cropperInstance) {
+    cropperInstance.destroy();
+    cropperInstance = null;
+  }
+}
+
+function applyCrop() {
+  if (!cropperInstance) return;
+
+  const canvas = cropperInstance.getCroppedCanvas({
+    width: 400,
+    height: 400,
+    imageSmoothingEnabled: true,
+    imageSmoothingQuality: "high",
+  });
+
+  if (!canvas) {
+    closeCropModal();
+    return;
+  }
+
+  const croppedDataUrl = canvas.toDataURL("image/jpeg", 0.9);
+  closeCropModal();
+  showProfileImagePreview(croppedDataUrl);
+  saveStateToStorage();
 }
 
 function handleProfileImageChange(event) {
@@ -486,8 +555,9 @@ function handleProfileImageChange(event) {
   const reader = new FileReader();
   reader.onload = () => {
     if (typeof reader.result === "string") {
-      showProfileImagePreview(reader.result);
-      saveStateToStorage();
+      // Store the full-size original in state so it persists across reloads
+      resumeState.personalInfo.originalProfileImage = reader.result;
+      openCropModal(reader.result);
     }
   };
   reader.onerror = () => {
@@ -499,6 +569,17 @@ function handleProfileImageChange(event) {
     event.target.value = "";
   };
   reader.readAsDataURL(file);
+}
+
+function handleRecropImage() {
+  // Always use the persisted full-size original for re-cropping
+  const original = resumeState.personalInfo.originalProfileImage;
+  if (original) {
+    openCropModal(original);
+  } else if (resumeState.personalInfo.profileImage) {
+    // Fallback for images saved before this fix
+    openCropModal(resumeState.personalInfo.profileImage);
+  }
 }
 
 /* ─── Form Event Handlers ─── */
@@ -616,6 +697,33 @@ function initProfileImage() {
   document
     .getElementById("remove-profile-image")
     ?.addEventListener("click", clearProfileImage);
+
+  document
+    .getElementById("recrop-profile-image")
+    ?.addEventListener("click", handleRecropImage);
+
+  // Crop modal buttons
+  document
+    .getElementById("crop-apply-btn")
+    ?.addEventListener("click", applyCrop);
+
+  document
+    .getElementById("crop-cancel-btn")
+    ?.addEventListener("click", closeCropModal);
+
+  document
+    .getElementById("crop-modal-backdrop")
+    ?.addEventListener("click", closeCropModal);
+
+  // Close crop modal on Escape key
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      const modal = document.getElementById("crop-modal");
+      if (modal && !modal.hidden) {
+        closeCropModal();
+      }
+    }
+  });
 }
 
 function initFormListeners() {
