@@ -334,4 +334,9 @@
       `;
     },
   };
+
+  if (typeof window !== "undefined" && window.TemplateRegistry) {
+    window.TemplateRegistry.register("executive", window.ResumeTemplates.executive);
+  }
 })();
+

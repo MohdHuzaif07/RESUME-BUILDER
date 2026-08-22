@@ -362,4 +362,9 @@
       return sections.join("");
     },
   };
+
+  if (typeof window !== "undefined" && window.TemplateRegistry) {
+    window.TemplateRegistry.register("minimal", window.ResumeTemplates.minimal);
+  }
 })();
+

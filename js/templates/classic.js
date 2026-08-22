@@ -344,4 +344,9 @@
       return sections.join("");
     },
   };
+
+  if (typeof window !== "undefined" && window.TemplateRegistry) {
+    window.TemplateRegistry.register("classic", window.ResumeTemplates.classic);
+  }
 })();
+

@@ -66,7 +66,7 @@
  * All form updates should modify this object.
  * @type {ResumeState}
  */
-const resumeState = {
+var resumeState = {
   personalInfo: {
     fullName: "",
     jobTitle: "",
@@ -100,4 +100,8 @@ const resumeState = {
   ],
   template: "classic",
 };
+
+if (typeof window !== "undefined") {
+  window.resumeState = resumeState;
+}
 

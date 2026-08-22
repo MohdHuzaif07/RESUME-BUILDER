@@ -1,23 +1,77 @@
-/* Resume preview template styles */
+/* Multi-Page A4 Container & Sheets */
 
-/* Base resume container */
+.resume-pages-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 28px;
+  width: 100%;
+  transform-origin: top center;
+  transition: transform 0.15s ease, margin-bottom 0.15s ease;
+}
 
-.resume {
+.resume-page-wrapper {
+  position: relative;
+  width: 794px;
+  min-width: 794px;
+  max-width: 794px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.resume-page-header-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-bottom: 10px;
+  padding: 4px 14px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--color-badge-text, #5c6578);
+  background-color: var(--color-badge-bg, #f1f4f8);
+  border: 1px solid var(--color-badge-border, #dde3ea);
+  border-radius: 20px;
+  user-select: none;
+  box-shadow: var(--shadow-sm, 0 1px 3px rgba(0, 0, 0, 0.05));
+  transition: background-color var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast);
+}
+
+/* Invariant A4 sheet dimensions (794px x 1123px at 96 DPI) */
+
+.resume,
+.resume-page-sheet {
   font-family: Georgia, "Times New Roman", Times, serif;
   font-size: 0.875rem;
   line-height: 1.55;
   color: #1a1a1a;
-  background-color: #fff;
-  padding: 2rem;
-  width: 100%;
-  max-width: 794px;
-  min-height: 1123px;
-  height: auto;
+  background-color: #ffffff;
+  padding: 2.5rem 2.5rem;
+  width: 794px !important;
+  min-width: 794px !important;
+  max-width: 794px !important;
+  height: 1123px !important;
+  min-height: 1123px !important;
+  max-height: 1123px !important;
+  overflow: hidden;
   margin: 0 auto;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
-  box-sizing: border-box;
+  box-sizing: border-box !important;
   position: relative;
-  transition: box-shadow 0.25s ease, opacity 0.2s ease, transform 0.2s ease;
+  transition: box-shadow 0.25s ease, opacity 0.2s ease;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: geometricPrecision;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.resume-page-sheet--subsequent {
+  padding: 2.5rem 2.5rem;
 }
 
 
@@ -373,110 +427,10 @@
   }
 }
 
-/* Responsive preview (narrow panels) */
-
-@media (max-width: 768px) {
-  .resume {
-    padding: 1.5rem;
-    min-height: auto;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-  }
-
-  .resume-name {
-    font-size: 1.375rem;
-  }
-
-  .resume-title {
-    font-size: 0.9375rem;
+/* Responsive preview container helper */
+@media (max-width: 1024px) {
+  .resume-page-wrapper {
+    max-width: 100%;
   }
 }
 
-@media (max-width: 480px) {
-  .resume {
-    padding: 1rem;
-    min-height: auto;
-  }
-
-  .resume-header {
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    gap: 0.75rem;
-  }
-
-  .resume-photo {
-    width: 72px;
-    height: 72px;
-  }
-
-  .resume-name {
-    font-size: 1.25rem;
-  }
-
-  .resume-title {
-    font-size: 0.875rem;
-  }
-
-  .resume-contact,
-  .resume-links {
-    justify-content: center;
-    font-size: 0.75rem;
-    gap: 0.2rem 0.625rem;
-  }
-
-  .resume-section-title {
-    font-size: 0.8125rem;
-  }
-
-  .resume-entry-header {
-    flex-direction: column;
-    gap: 0.125rem;
-  }
-
-  .resume-entry-title {
-    font-size: 0.8125rem;
-  }
-
-  .resume-entry-date {
-    white-space: normal;
-    font-size: 0.75rem;
-  }
-
-  .resume-entry-subtitle {
-    font-size: 0.8125rem;
-  }
-
-  .resume-summary,
-  .resume-entry-description {
-    font-size: 0.75rem;
-  }
-
-  .resume-skill {
-    font-size: 0.6875rem;
-    padding: 0.15rem 0.375rem;
-  }
-
-  .resume-list li {
-    font-size: 0.75rem;
-  }
-
-  .resume-language {
-    font-size: 0.75rem;
-  }
-}
-
-@media (max-width: 360px) {
-  .resume {
-    padding: 0.75rem;
-  }
-
-  .resume-name {
-    font-size: 1.125rem;
-  }
-
-  .resume-contact,
-  .resume-links {
-    flex-direction: column;
-    gap: 0.125rem;
-  }
-}

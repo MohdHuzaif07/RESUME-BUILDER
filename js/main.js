@@ -509,11 +509,15 @@ let cropperInstance = null;
 
 function clearProfileImage() {
   const fileInput = document.getElementById("profile-image");
+  const hint = document.getElementById("profile-image-hint");
   const previewWrapper = document.getElementById("profile-image-preview-wrapper");
   const previewImage = document.getElementById("profile-image-preview");
 
-  if (fileInput) fileInput.value = "";
-  // B5 Fix: Use removeAttribute instead of setting src="" to avoid a spurious network request
+  if (fileInput) {
+    fileInput.value = "";
+    fileInput.style.display = "";
+  }
+  if (hint) hint.style.display = "";
   if (previewImage) previewImage.removeAttribute("src");
   if (previewWrapper) previewWrapper.hidden = true;
 
@@ -524,9 +528,13 @@ function clearProfileImage() {
 }
 
 function showProfileImagePreview(dataUrl) {
+  const fileInput = document.getElementById("profile-image");
+  const hint = document.getElementById("profile-image-hint");
   const previewWrapper = document.getElementById("profile-image-preview-wrapper");
   const previewImage = document.getElementById("profile-image-preview");
 
+  if (fileInput) fileInput.style.display = "none";
+  if (hint) hint.style.display = "none";
   if (previewImage) previewImage.src = dataUrl;
   if (previewWrapper) previewWrapper.hidden = false;
 
@@ -757,6 +765,12 @@ function initProfileImage() {
     ?.addEventListener("change", handleProfileImageChange);
 
   document
+    .getElementById("change-profile-image")
+    ?.addEventListener("click", () => {
+      document.getElementById("profile-image")?.click();
+    });
+
+  document
     .getElementById("remove-profile-image")
     ?.addEventListener("click", clearProfileImage);
 
@@ -970,7 +984,19 @@ function initPhoneInput() {
   updatePhoneInputAttributes();
 }
 
+function initThemeToggle() {
+  const themeBtn = document.getElementById("theme-toggle-btn");
+  if (themeBtn) {
+    themeBtn.addEventListener("click", () => {
+      if (window.ThemeService) {
+        window.ThemeService.cycleTheme();
+      }
+    });
+  }
+}
+
 function initApp() {
+  initThemeToggle();
   initFormListeners();
   initDynamicSections();
   initValidation();
@@ -989,4 +1015,5 @@ function initApp() {
 }
 
 document.addEventListener("DOMContentLoaded", initApp);
+
 

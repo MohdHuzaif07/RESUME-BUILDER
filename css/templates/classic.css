@@ -3,10 +3,10 @@
 .resume--classic {
   font-family: Georgia, "Times New Roman", Times, serif;
   font-size: 0.875rem;
-  line-height: 1.5;
+  line-height: 1.55;
   color: #111111;
   background-color: #ffffff;
-  padding: 2.25rem;
+  padding: 2.5rem 2.5rem;
   box-sizing: border-box;
 }
 
@@ -98,7 +98,7 @@
 }
 
 .resume--classic .resume-section {
-  margin-bottom: 1.15rem;
+  margin-bottom: 1.25rem;
 }
 
 .resume--classic .resume-section:last-child {
@@ -106,8 +106,8 @@
 }
 
 .resume--classic .resume-section-title {
-  margin: 0 0 0.5rem;
-  padding-bottom: 0.15rem;
+  margin: 0 0 0.55rem;
+  padding-bottom: 0.2rem;
   font-size: 0.9375rem;
   font-weight: 700;
   font-variant: small-caps;
@@ -123,6 +123,7 @@
   margin: 0;
   color: #222222;
   text-align: justify;
+  line-height: 1.55;
 }
 
 .resume--classic .resume-entry {
@@ -162,34 +163,35 @@
 }
 
 .resume--classic .resume-entry-subtitle {
-  margin: 0.1rem 0 0.2rem;
+  margin: 0.125rem 0 0.25rem;
   font-size: 0.875rem;
   font-weight: 600;
   color: #333333;
 }
 
 .resume--classic .resume-entry-meta {
-  margin: 0 0 0.2rem;
+  margin: 0 0 0.25rem;
   font-size: 0.8125rem;
   color: #555555;
   font-style: italic;
 }
 
 .resume--classic .resume-entry-description {
-  margin: 0.2rem 0 0;
+  margin: 0.25rem 0 0;
   font-size: 0.8125rem;
   color: #222222;
+  line-height: 1.5;
 }
 
 .resume--classic .resume-entry-description ul,
 .resume--classic .resume-summary ul {
-  margin: 0.2rem 0 0;
+  margin: 0.25rem 0 0;
   padding-left: 1.25rem;
 }
 
 .resume--classic .resume-entry-description li,
 .resume--classic .resume-summary li {
-  margin-bottom: 0.125rem;
+  margin-bottom: 0.25rem;
 }
 
 .resume--classic .resume-list {
@@ -219,48 +221,3 @@
   color: #555555;
 }
 
-/* Responsive */
-
-@media (max-width: 480px) {
-  .resume--classic {
-    padding: 1rem;
-  }
-
-  .resume--classic .resume-header {
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-  }
-
-  .resume--classic .resume-header.has-photo {
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-  }
-
-  .resume--classic .resume-header.has-photo .resume-contact {
-    justify-content: center;
-  }
-
-  .resume--classic .resume-photo {
-    width: 72px;
-    height: 72px;
-  }
-
-  .resume--classic .resume-name {
-    font-size: 1.375rem;
-  }
-
-  .resume--classic .resume-entry-header {
-    flex-direction: column;
-    gap: 0.125rem;
-  }
-
-  .resume--classic .resume-entry-date {
-    white-space: normal;
-  }
-
-  .resume--classic .resume-contact {
-    justify-content: center;
-  }
-}

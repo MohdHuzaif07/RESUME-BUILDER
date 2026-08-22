@@ -4,6 +4,19 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Resume Builder</title>
+  <!-- Anti-FOUC Theme Bootstrapper -->
+  <script>
+    (function() {
+      try {
+        var saved = localStorage.getItem("resume_builder_theme_pref");
+        var prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+        var theme = (saved === "dark" || saved === "light") ? saved : (prefersDark ? "dark" : "light");
+        document.documentElement.setAttribute("data-theme", theme);
+        document.documentElement.setAttribute("data-theme-mode", saved || "system");
+      } catch(e) {}
+    })();
+  </script>
+  <link rel="stylesheet" href="css/themes/theme.css">
   <link rel="stylesheet" href="css/styles.css">
   <link rel="stylesheet" href="css/resume.css">
   <link rel="stylesheet" href="css/templates/classic.css">
@@ -13,8 +26,22 @@
 </head>
 <body>
   <header class="app-header">
-    <h1>Resume Builder</h1>
-    <p class="app-tagline">Enter your details and preview your resume in real time.</p>
+    <div class="app-header-inner">
+      <div class="app-header-branding">
+        <h1>Resume Builder</h1>
+        <p class="app-tagline">Enter your details and preview your resume in real time.</p>
+      </div>
+      <div class="app-header-actions">
+        <button type="button" id="theme-toggle-btn" class="theme-toggle-btn" aria-label="Toggle theme">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+            <line x1="8" y1="21" x2="16" y2="21"></line>
+            <line x1="12" y1="17" x2="12" y2="21"></line>
+          </svg>
+          <span class="theme-label">Theme: Auto (System)</span>
+        </button>
+      </div>
+    </div>
   </header>
 
   <!-- Mobile panel toggle (visible only on small screens) -->
@@ -57,15 +84,15 @@
             >
           </div>
 
-          <div class="form-group">
-            <label for="profile-image">Profile Image</label>
+          <div class="form-group" id="profile-image-form-group">
+            <label for="profile-image" id="profile-image-label">Profile Image</label>
             <input
               type="file"
               id="profile-image"
               name="profileImage"
               accept="image/jpeg,image/png,image/webp"
             >
-            <p class="field-hint">Accepted formats: JPG, PNG, WebP. Max size: 2 MB.</p>
+            <p class="field-hint" id="profile-image-hint">Accepted formats: JPG, PNG, WebP. Max size: 2 MB.</p>
             <span class="error-message" id="profile-image-error" role="alert"></span>
             <div class="image-preview-wrapper" id="profile-image-preview-wrapper" hidden>
               <img
@@ -74,12 +101,17 @@
                 src=""
                 alt="Profile preview"
               >
-              <button type="button" id="recrop-profile-image" class="btn btn-secondary btn-sm">
-                Crop
-              </button>
-              <button type="button" id="remove-profile-image" class="btn btn-secondary btn-sm">
-                Remove Image
-              </button>
+              <div class="image-preview-actions">
+                <button type="button" id="change-profile-image" class="btn btn-secondary btn-sm">
+                  Change Image
+                </button>
+                <button type="button" id="recrop-profile-image" class="btn btn-secondary btn-sm">
+                  Recrop
+                </button>
+                <button type="button" id="remove-profile-image" class="btn btn-danger btn-sm">
+                  Remove
+                </button>
+              </div>
             </div>
           </div>
         </fieldset>
@@ -464,9 +496,9 @@
           Download PDF
         </button>
       </div>
-      <article id="resume-preview" class="resume" aria-live="polite">
+      <div id="resume-preview" class="resume-pages-container" aria-live="polite">
         <!-- Live preview will render here -->
-      </article>
+      </div>
     </section>
   </main>
 
@@ -694,15 +726,29 @@
   <!-- Image Cropping Library -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.js"></script>
 
-  <!-- Application Modules -->
+  <!-- Application Architecture Modules -->
+  <!-- 1. Configuration & Registries -->
+  <script src="js/config/constants.js"></script>
+  <script src="js/config/sectionRegistry.js"></script>
+  <script src="js/templates/templateRegistry.js"></script>
+
+  <!-- 2. Core State & Services -->
+  <script src="js/services/themeService.js"></script>
   <script src="js/state.js"></script>
+  <script src="js/services/validationService.js"></script>
   <script src="js/validation.js"></script>
-  <script src="js/reorder.js"></script>
-  <script src="js/preview.js"></script>
-  <script src="js/pdf.js"></script>
+  <script src="js/services/pdfExportService.js"></script>
+
+  <!-- 3. Templates -->
   <script src="js/templates/classic.js"></script>
   <script src="js/templates/minimal.js"></script>
   <script src="js/templates/executive.js"></script>
+
+  <!-- 4. Features & Controllers -->
+  <script src="js/features/paginationEngine.js"></script>
+  <script src="js/reorder.js"></script>
+  <script src="js/preview.js"></script>
+  <script src="js/pdf.js"></script>
   <script src="js/main.js"></script>
 
   <!-- Image Crop Modal -->
